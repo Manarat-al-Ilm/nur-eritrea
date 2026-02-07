@@ -9,6 +9,7 @@ Dreisprachige islamische Plattform (Arabisch, Englisch, Tigrinya) mit Büchern, 
 - **Framework:** Astro (Static Site Generator)
 - **Styling:** Tailwind CSS
 - **Hosting:** Cloudflare Pages
+- **PDF-Speicher:** Cloudflare R2
 - **Schriften:** Amiri (Arabisch), Noto Sans Ethiopic (Tigrinya), Tajawal (Body)
 
 ## Farben
@@ -41,10 +42,11 @@ src/
     └── global.css
 
 public/
-├── books/           # PDF-Dateien
 ├── favicon.svg
 ├── og-image.svg     # Social Media Bild
 └── robots.txt
+
+# PDFs werden auf Cloudflare R2 gehostet (nicht im Git)
 ```
 
 ## Installation & Entwicklung
@@ -97,12 +99,23 @@ Wenn die manuelle JSON-Bearbeitung zu unübersichtlich wird (50+ Einträge):
 
 Alle Inhalte sind in `src/data/*.json`:
 
-- **Bücher hinzufügen:** `src/data/books.json` bearbeiten, PDF in `public/books/` ablegen
+- **Bücher hinzufügen:** `src/data/books.json` bearbeiten, PDF auf Cloudflare R2 hochladen
 - **Videos hinzufügen:** `src/data/videos.json` bearbeiten (YouTube URL/ID)
 - **Audio hinzufügen:** `src/data/audio.json` bearbeiten
 - **Gelehrte hinzufügen:** `src/data/scholars.json` bearbeiten
 
 Nach Änderungen: Push zu GitHub → automatischer Rebuild.
+
+## PDF-Hosting (Cloudflare R2)
+
+PDFs sind zu groß für Git. Sie werden auf Cloudflare R2 gehostet:
+
+1. **R2 Dashboard:** dash.cloudflare.com → R2 Object Storage
+2. **Bucket:** `nur-eritrea-books`
+3. **Upload:** PDFs im Dashboard hochladen
+4. **URL-Format:** `https://pub-XXX.r2.dev/dateiname.pdf`
+
+Die PDF-URLs werden in `src/data/books.json` unter `pdfUrl` gespeichert.
 
 ## Layout
 

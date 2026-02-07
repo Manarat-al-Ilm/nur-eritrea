@@ -1,4 +1,6 @@
+# Block all search engines until site is ready
 User-agent: *
-Allow: /
+Disallow: /
 
-Sitemap: https://nur-eritrea.pages.dev/sitemap-index.xml
+# Sitemap will be enabled later with custom domain
+# Sitemap: https://DEINE-DOMAIN.com/sitemap-index.xml
