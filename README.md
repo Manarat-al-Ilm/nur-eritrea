@@ -1,6 +1,6 @@
-# nur-eritrea - Islamische Wissensplattform
+# nur-eritrea - Islamic Knowledge Platform
 
-Dreisprachige islamische Plattform (Arabisch, Englisch, Tigrinya) mit Büchern, Videos, Audio und Gelehrten-Biografien.
+Trilingual Islamic platform (Arabic, English, Tigrinya) featuring books, videos, audio, and scholar biographies.
 
 **Live:** https://nur-eritrea.pages.dev
 
@@ -9,27 +9,27 @@ Dreisprachige islamische Plattform (Arabisch, Englisch, Tigrinya) mit Büchern, 
 - **Framework:** Astro (Static Site Generator)
 - **Styling:** Tailwind CSS
 - **Hosting:** Cloudflare Pages
-- **PDF-Speicher:** Cloudflare R2
-- **Schriften:** Amiri (Arabisch), Noto Sans Ethiopic (Tigrinya), Tajawal (Body)
+- **PDF Storage:** GitHub Releases
+- **Fonts:** Amiri (Arabic), Noto Sans Ethiopic (Tigrinya), Tajawal (Body)
 
-## Farben
+## Colors
 
-| Farbe | Hex | Verwendung |
-|-------|-----|------------|
-| Primary | `#1A5C5A` | Teal - Hauptfarbe |
-| Accent | `#C8A45C` | Gold - Akzente |
-| Cream | `#FAF6F0` | Hintergrund |
+| Color | Hex | Usage |
+|-------|-----|-------|
+| Primary | `#1A5C5A` | Teal - Main color |
+| Accent | `#C8A45C` | Gold - Accents |
+| Cream | `#FAF6F0` | Background |
 
-## Projektstruktur
+## Project Structure
 
 ```
 src/
-├── components/       # Astro-Komponenten
-├── data/            # JSON-Datenbank
-│   ├── books.json   # 5 Bücher
-│   ├── videos.json  # 58 Videos + Gelehrte
-│   ├── audio.json   # 8 Audio-Einträge
-│   └── scholars.json # 5 historische Gelehrte
+├── components/       # Astro components
+├── data/            # JSON database
+│   ├── books.json   # 5 books
+│   ├── videos.json  # 58 videos + scholars
+│   ├── audio.json   # 8 audio entries
+│   └── scholars.json # 5 historical scholars
 ├── layouts/
 │   └── BaseLayout.astro
 ├── pages/
@@ -43,82 +43,82 @@ src/
 
 public/
 ├── favicon.svg
-├── og-image.svg     # Social Media Bild
+├── og-image.svg     # Social media image
 └── robots.txt
 
-# PDFs werden auf Cloudflare R2 gehostet (nicht im Git)
+# PDFs are hosted on GitHub Releases (not in Git)
 ```
 
-## Installation & Entwicklung
+## Installation & Development
 
 ```bash
-# Dependencies installieren
+# Install dependencies
 npm install
 
-# Entwicklungsserver starten
+# Start development server
 npm run dev
 
-# Für Produktion bauen
+# Build for production
 npm run build
 
-# Build lokal testen
+# Preview build locally
 npm run preview
 ```
 
 ## Deployment
 
-Push zu GitHub → Cloudflare Pages baut automatisch.
+Push to GitHub → Cloudflare Pages builds automatically.
 
-**Build-Einstellungen auf Cloudflare:**
+**Cloudflare Build Settings:**
 - Build command: `npm run build`
 - Build output directory: `dist`
 
 ## SEO
 
-- Sitemap wird automatisch generiert (`/sitemap-index.xml`)
-- Open Graph & Twitter Cards konfiguriert
-- Canonical URLs gesetzt
-- robots.txt vorhanden
+- Sitemap auto-generated (`/sitemap-index.xml`)
+- Open Graph & Twitter Cards configured
+- Canonical URLs set
+- robots.txt present
 
-## TODO bei eigener Domain
+## TODO: Custom Domain
 
-Wenn du eine eigene Domain verwendest, ändere:
+When using a custom domain, update:
 
-1. `astro.config.mjs` → `site: 'https://DEINE-DOMAIN.com'`
-2. `public/robots.txt` → Sitemap URL anpassen
+1. `astro.config.mjs` → `site: 'https://YOUR-DOMAIN.com'`
+2. `public/robots.txt` → Update sitemap URL
 
-## TODO: Admin-Seite
+## TODO: Admin Panel
 
-Wenn die manuelle JSON-Bearbeitung zu unübersichtlich wird (50+ Einträge):
+When manual JSON editing becomes unwieldy (50+ entries):
 
-- Admin-Interface mit GitHub API (bearbeitet JSON-Dateien direkt)
-- Oder: Migration zu Cloudflare D1 Datenbank
-- Login über Cloudflare Access (kostenlos)
+- Admin interface using GitHub API (edits JSON files directly)
+- Or: Migrate to Cloudflare D1 database
+- Login via Cloudflare Access (free)
 
-## Daten bearbeiten
+## Editing Content
 
-Alle Inhalte sind in `src/data/*.json`:
+All content is in `src/data/*.json`:
 
-- **Bücher hinzufügen:** `src/data/books.json` bearbeiten, PDF auf Cloudflare R2 hochladen
-- **Videos hinzufügen:** `src/data/videos.json` bearbeiten (YouTube URL/ID)
-- **Audio hinzufügen:** `src/data/audio.json` bearbeiten
-- **Gelehrte hinzufügen:** `src/data/scholars.json` bearbeiten
+- **Add books:** Edit `src/data/books.json`, upload PDF to GitHub Releases
+- **Add videos:** Edit `src/data/videos.json` (YouTube URL/ID)
+- **Add audio:** Edit `src/data/audio.json`
+- **Add scholars:** Edit `src/data/scholars.json`
 
-Nach Änderungen: Push zu GitHub → automatischer Rebuild.
+After changes: Push to GitHub → automatic rebuild.
 
-## PDF-Hosting (Cloudflare R2)
+## PDF Hosting (GitHub Releases)
 
-PDFs sind zu groß für Git. Sie werden auf Cloudflare R2 gehostet:
+PDFs are too large for Git. They are hosted on GitHub Releases:
 
-1. **R2 Dashboard:** dash.cloudflare.com → R2 Object Storage
-2. **Bucket:** `nur-eritrea-books`
-3. **Upload:** PDFs im Dashboard hochladen
-4. **URL-Format:** `https://pub-XXX.r2.dev/dateiname.pdf`
+1. Go to GitHub → Releases → Create new release
+2. Tag: `v1.0-books` (or similar)
+3. Upload PDFs as release assets
+4. URL format: `https://github.com/Manarat-al-Ilm/nur-eritrea/releases/download/TAG/filename.pdf`
 
-Die PDF-URLs werden in `src/data/books.json` unter `pdfUrl` gespeichert.
+PDF URLs are stored in `src/data/books.json` under `pdfUrl`.
 
 ## Layout
 
-- RTL (Rechts-nach-Links) als Standard für Arabisch
-- Jeder Titel zeigt alle drei Sprachen: Arabisch → Englisch → Tigrinya
-- Mobile-first responsive Design
+- RTL (Right-to-Left) as default for Arabic
+- Each title shows all three languages: Arabic → English → Tigrinya
+- Mobile-first responsive design
