@@ -19,10 +19,10 @@ const stats = [
   { labelAr: 'عالم', labelTi: 'ዓሊም', count: videosData.scholars.length, icon: 'scholar' },
 ];
 
-// Featured items from JSON (first 2-3 of each)
-const featuredBooks = booksData.books.slice(0, 2);
-const featuredVideos = videosData.videos.slice(0, 3).map(v => ({ ...v, duration: '' }));
-const featuredAudio = audioData.items.slice(0, 2);
+// Featured items from JSON (last 2-3 of each = newest)
+const featuredBooks = booksData.books.slice(-2).reverse();
+const featuredVideos = videosData.videos.slice(-3).reverse().map(v => ({ ...v, duration: '' }));
+const featuredAudio = audioData.items.slice(-2).reverse();
 
 // Main navigation sections
 const sections = [
