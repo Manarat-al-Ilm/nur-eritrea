@@ -1,0 +1,115 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Lokale Backend für Entwicklung (npm run cms)
+local_backend: true
+
+# Medien-Dateien
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+# Lokalisierung
+locale: "ar"
+
+# Slug-Konfiguration
+slug:
+  encoding: "ascii"
+  clean_accents: true
+
+collections:
+  # Bücher Collection
+  - name: "books"
+    label: "الكتب | Books"
+    label_singular: "كتاب | Book"
+    folder: "src/content/books"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "عنوان الكتاب (عربي)", name: "title_ar", widget: "string", required: true }
+      - { label: "عنوان الكتاب (تيغرينية)", name: "title_ti", widget: "string", required: false }
+      - { label: "المؤلف", name: "author", widget: "string", required: true }
+      - label: "التصنيف"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "العقيدة", value: "العقيدة" }
+          - { label: "الفقه", value: "الفقه" }
+          - { label: "الحديث", value: "الحديث" }
+          - { label: "التفسير", value: "التفسير" }
+          - { label: "السيرة", value: "السيرة" }
+          - { label: "التزكية", value: "التزكية" }
+      - { label: "الوصف", name: "description", widget: "text", required: true }
+      - { label: "رابط PDF", name: "pdf_url", widget: "file", required: true, media_folder: "/public/books", public_folder: "/books" }
+      - { label: "صورة الغلاف", name: "cover_image", widget: "image", required: false }
+      - { label: "عدد الصفحات", name: "pages", widget: "number", required: false }
+      - { label: "التاريخ", name: "date", widget: "datetime", required: false }
+      - { label: "محتوى إضافي", name: "body", widget: "markdown", required: false }
+
+  # فيديوهات Collection
+  - name: "videos"
+    label: "الفيديوهات | Videos"
+    label_singular: "فيديو | Video"
+    folder: "src/content/videos"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "رابط يوتيوب", name: "youtube_url", widget: "string", required: true, hint: "مثال: https://www.youtube.com/watch?v=XXXXX" }
+      - { label: "العنوان (عربي)", name: "title_ar", widget: "string", required: true }
+      - { label: "العنوان (تيغرينية)", name: "title_ti", widget: "string", required: false }
+      - { label: "اسم السلسلة", name: "series_name", widget: "string", required: false }
+      - { label: "رقم الحلقة", name: "episode_number", widget: "number", required: false }
+      - { label: "المدة", name: "duration", widget: "string", required: true, hint: "مثال: 45:30" }
+      - { label: "الشيخ", name: "scholar", widget: "string", required: true }
+      - { label: "الوصف", name: "description", widget: "text", required: false }
+      - { label: "التاريخ", name: "date", widget: "datetime", required: false }
+      - { label: "محتوى إضافي", name: "body", widget: "markdown", required: false }
+
+  # صوتيات Collection
+  - name: "audio"
+    label: "الصوتيات | Audio"
+    label_singular: "صوتي | Audio"
+    folder: "src/content/audio"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "العنوان (عربي)", name: "title_ar", widget: "string", required: true }
+      - { label: "العنوان (تيغرينية)", name: "title_ti", widget: "string", required: false }
+      - { label: "الشيخ", name: "scholar", widget: "string", required: true }
+      - label: "التصنيف"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "محاضرات", value: "محاضرات" }
+          - { label: "دروس", value: "دروس" }
+          - { label: "خطب", value: "خطب" }
+          - { label: "تلاوات", value: "تلاوات" }
+          - { label: "أذكار", value: "أذكار" }
+      - { label: "المدة", name: "duration", widget: "string", required: true }
+      - { label: "ملف صوتي", name: "audio_url", widget: "file", required: false, media_folder: "/public/audio", public_folder: "/audio" }
+      - { label: "معرف يوتيوب", name: "youtube_id", widget: "string", required: false, hint: "إذا كان الصوت على يوتيوب" }
+      - { label: "الوصف", name: "description", widget: "text", required: false }
+      - { label: "التاريخ", name: "date", widget: "datetime", required: false }
+      - { label: "محتوى إضافي", name: "body", widget: "markdown", required: false }
+
+  # سيرة العلماء Collection
+  - name: "scholars"
+    label: "سيرة العلماء | Scholars"
+    label_singular: "عالم | Scholar"
+    folder: "src/content/scholars"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "الاسم (عربي)", name: "name_ar", widget: "string", required: true }
+      - { label: "الاسم (تيغرينية)", name: "name_ti", widget: "string", required: false }
+      - { label: "الفترة الزمنية", name: "era", widget: "string", required: true, hint: "مثال: 1920 - 1995" }
+      - { label: "المنطقة", name: "region", widget: "string", required: true, hint: "مثال: أسمرا | ኣስመራ" }
+      - { label: "اللقب العلمي", name: "title", widget: "string", required: true }
+      - { label: "السيرة الذاتية", name: "bio", widget: "text", required: true }
+      - label: "الإنجازات"
+        name: "achievements"
+        widget: "list"
+        required: false
+        field: { label: "إنجاز", name: "achievement", widget: "string" }
+      - { label: "صورة", name: "image_url", widget: "image", required: false }
+      - { label: "تفاصيل إضافية", name: "body", widget: "markdown", required: false }

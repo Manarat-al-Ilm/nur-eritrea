@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import scholarsData from '../../data/scholars.json';
+
+const scholars = scholarsData;
+---
+
+<BaseLayout
+  title="سيرة علماء إريتريا"
+  titleTi="ታሪኽ መሻይኽ ኤርትራ"
+  description="تاريخ وسير العلماء المسلمين في إريتريا"
+>
+  <!-- Page Header -->
+  <section class="hero-gradient text-white py-16">
+    <div class="container text-center">
+      <div class="trilingual-title items-center mb-6">
+        <h1 class="ar text-4xl font-bold text-white">سيرة علماء إريتريا</h1>
+        <p class="en text-xl text-accent font-medium">Eritrean Islamic Scholars</p>
+        <p class="ti text-lg text-white/80 font-ethiopic">ታሪኽ መሻይኽ ኤርትራ</p>
+      </div>
+      <p class="text-lg opacity-90 max-w-2xl mx-auto">
+        تعرف على تاريخ العلماء المسلمين الذين أناروا إريتريا بعلمهم ودعوتهم
+      </p>
+      <p class="text-base opacity-75 max-w-2xl mx-auto mt-2">
+        Learn about the Muslim scholars who illuminated Eritrea with their knowledge
+      </p>
+      <p class="text-sm opacity-60 font-ethiopic mt-2">
+        ንኤርትራ ብፍልጠቶምን ዳዕዋኦምን ዘብርሁ ዑለማእ ሙስሊሚን ታሪኾም ፍለጡ
+      </p>
+    </div>
+  </section>
+
+  <!-- Timeline Introduction -->
+  <section class="py-12 bg-white">
+    <div class="container">
+      <div class="max-w-3xl mx-auto text-center">
+        <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
+          <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-text-dark mb-4 font-amiri">
+          تراث علمي عريق
+        </h2>
+        <p class="text-text-light leading-relaxed">
+          حظيت إريتريا عبر تاريخها بنخبة من العلماء المسلمين الذين حفظوا الدين ونشروا العلم الشرعي.
+          هذه الصفحة توثق سيرهم وإنجازاتهم ليعرف الجيل الحاضر تاريخ علمائه ويقتدي بهم.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scholars Timeline -->
+  <section class="py-12 bg-cream">
+    <div class="container">
+      <div class="max-w-4xl mx-auto">
+        {scholars.map((scholar, index) => (
+          <div class="relative pr-8 pb-12 border-r-2 border-primary/30 last:pb-0">
+            <!-- Timeline Dot -->
+            <div class="absolute -right-3 top-0 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+              <div class="w-3 h-3 rounded-full bg-white"></div>
+            </div>
+
+            <!-- Scholar Card -->
+            <div class="card p-6 mr-4">
+              <div class="flex flex-col md:flex-row gap-6">
+                <!-- Avatar -->
+                <div class="flex-shrink-0">
+                  {scholar.imageUrl ? (
+                    <img
+                      src={scholar.imageUrl}
+                      alt={scholar.nameAr}
+                      class="w-32 h-32 rounded-xl object-cover"
+                    />
+                  ) : (
+                    <div class="w-32 h-32 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
+                      <span class="text-4xl text-white font-amiri">
+                        {scholar.nameAr.split(' ')[1]?.charAt(0) || scholar.nameAr.charAt(0)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <!-- Info -->
+                <div class="flex-1">
+                  <div class="flex flex-wrap items-start justify-between gap-2 mb-3">
+                    <div>
+                      <h3 class="text-xl font-bold text-text-dark font-amiri">{scholar.nameAr}</h3>
+                      <p class="text-sm text-text-light font-ethiopic">{scholar.nameTi}</p>
+                    </div>
+                    <div class="text-left">
+                      <span class="badge badge-primary">{scholar.era}</span>
+                      <p class="text-xs text-text-light mt-1">{scholar.region}</p>
+                    </div>
+                  </div>
+
+                  <p class="text-accent font-medium text-sm mb-3">{scholar.title}</p>
+                  <p class="text-text-light text-sm leading-relaxed mb-4">{scholar.bio}</p>
+
+                  <!-- Achievements -->
+                  <div class="bg-cream rounded-lg p-4">
+                    <h4 class="text-sm font-bold text-primary mb-2">أبرز الإنجازات:</h4>
+                    <ul class="space-y-1">
+                      {scholar.achievements.map((achievement) => (
+                        <li class="text-sm text-text-light flex items-start gap-2">
+                          <svg class="w-4 h-4 text-accent flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          <span>{achievement}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contribute CTA -->
+  <section class="py-16 bg-white">
+    <div class="container text-center">
+      <div class="trilingual-title items-center mb-6">
+        <h2 class="ar text-3xl font-bold text-text-dark">ساهم في التوثيق</h2>
+        <p class="en text-lg text-primary font-medium">Help Us Document History</p>
+        <p class="ti text-base text-text-light font-ethiopic">ኣብ ምምዝጋብ ተሳተፉ</p>
+      </div>
+      <p class="text-lg text-text-light mb-4 max-w-xl mx-auto">
+        هل لديك معلومات أو صور عن علماء إريتريا القدامى؟ ساعدنا في الحفاظ على هذا التراث
+      </p>
+      <p class="text-base text-text-light mb-8 max-w-xl mx-auto">
+        Do you have information or photos about Eritrean scholars? Help us preserve this heritage
+      </p>
+      <a href="/contact" class="btn btn-primary">
+        تواصل معنا | Contact Us
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .font-ethiopic {
+    font-family: var(--font-ethiopic);
+  }
+  .font-amiri {
+    font-family: var(--font-amiri);
+  }
+</style>

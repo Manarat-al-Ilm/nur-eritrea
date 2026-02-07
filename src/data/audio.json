@@ -1,0 +1,97 @@
+{
+  "categories": [
+    { "id": "all", "labelAr": "الكل", "labelTi": "ኩሉ" },
+    { "id": "محاضرات", "labelAr": "محاضرات", "labelTi": "መደረታት" },
+    { "id": "دروس", "labelAr": "دروس", "labelTi": "ትምህርቲ" },
+    { "id": "خطب", "labelAr": "خطب", "labelTi": "ኹጥባ" },
+    { "id": "تلاوات", "labelAr": "تلاوات", "labelTi": "ትላወት" }
+  ],
+  "scholars": [
+    { "id": "all", "labelAr": "جميع العلماء", "labelTi": "ኩሎም ዑለማእ" },
+    { "id": "الشيخ محمد علي", "labelAr": "الشيخ محمد علي", "labelTi": "ሸኽ ሙሓመድ ዓሊ" },
+    { "id": "الشيخ أحمد عبدالله", "labelAr": "الشيخ أحمد عبدالله", "labelTi": "ሸኽ ኣሕመድ ዓብደላ" },
+    { "id": "الشيخ إبراهيم محمد", "labelAr": "الشيخ إبراهيم محمد", "labelTi": "ሸኽ ኢብራሂም ሙሓመድ" }
+  ],
+  "items": [
+    {
+      "slug": "tawheed-lecture-1",
+      "titleAr": "التوحيد وأقسامه",
+      "titleTi": "ተውሂድን ኣከፋፍላኡን",
+      "scholarName": "الشيخ محمد علي",
+      "category": "محاضرات",
+      "duration": "45:30",
+      "youtubeId": "jQscpf852IU",
+      "description": "محاضرة في شرح أقسام التوحيد الثلاثة: الربوبية والألوهية والأسماء والصفات."
+    },
+    {
+      "slug": "friday-khutba-patience",
+      "titleAr": "خطبة الجمعة - الصبر عند المصائب",
+      "titleTi": "ኹጥባ ኣልጁምዓ - ትዕግስቲ ኣብ ግዜ ጸገም",
+      "scholarName": "الشيخ أحمد عبدالله",
+      "category": "خطب",
+      "duration": "32:15",
+      "youtubeId": "jQscpf852IU",
+      "description": "خطبة عن فضل الصبر وأجره عند الله وكيفية التعامل مع المصائب."
+    },
+    {
+      "slug": "fiqh-lesson-prayer",
+      "titleAr": "درس في أحكام الصلاة",
+      "titleTi": "ትምህርቲ ሕግታት ጸሎት",
+      "scholarName": "الشيخ إبراهيم محمد",
+      "category": "دروس",
+      "duration": "55:00",
+      "youtubeId": "jQscpf852IU",
+      "description": "شرح مفصل لأركان الصلاة وواجباتها وسننها ومبطلاتها."
+    },
+    {
+      "slug": "quran-recitation-yaseen",
+      "titleAr": "تلاوة سورة يس",
+      "titleTi": "ትላወት ሱረት ያሲን",
+      "scholarName": "الشيخ محمد علي",
+      "category": "تلاوات",
+      "duration": "18:45",
+      "youtubeId": "jQscpf852IU",
+      "description": "تلاوة خاشعة لسورة يس برواية حفص عن عاصم."
+    },
+    {
+      "slug": "ramadan-lecture",
+      "titleAr": "فضائل شهر رمضان",
+      "titleTi": "ፋይዳታት ወርሒ ረመዳን",
+      "scholarName": "الشيخ أحمد عبدالله",
+      "category": "محاضرات",
+      "duration": "42:20",
+      "youtubeId": "jQscpf852IU",
+      "description": "محاضرة عن فضائل شهر رمضان وكيفية استثماره في الطاعات."
+    },
+    {
+      "slug": "seerah-lesson-hijrah",
+      "titleAr": "درس في السيرة - الهجرة النبوية",
+      "titleTi": "ትምህርቲ ሲራ - ሂጅራ ነብይ",
+      "scholarName": "الشيخ إبراهيم محمد",
+      "category": "دروس",
+      "duration": "58:30",
+      "youtubeId": "jQscpf852IU",
+      "description": "شرح أحداث الهجرة النبوية والدروس المستفادة منها."
+    },
+    {
+      "slug": "eid-khutba",
+      "titleAr": "خطبة عيد الفطر",
+      "titleTi": "ኹጥባ ዒድ ኣልፊጥር",
+      "scholarName": "الشيخ محمد علي",
+      "category": "خطب",
+      "duration": "28:00",
+      "youtubeId": "jQscpf852IU",
+      "description": "خطبة عيد الفطر المبارك وآداب العيد."
+    },
+    {
+      "slug": "quran-recitation-mulk",
+      "titleAr": "تلاوة سورة الملك",
+      "titleTi": "ትላወት ሱረት ኣልሙልክ",
+      "scholarName": "الشيخ أحمد عبدالله",
+      "category": "تلاوات",
+      "duration": "12:30",
+      "youtubeId": "jQscpf852IU",
+      "description": "تلاوة سورة الملك التي تشفع لصاحبها."
+    }
+  ]
+}

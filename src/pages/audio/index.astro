@@ -1,0 +1,176 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AudioCard from '../../components/AudioCard.astro';
+import SearchBar from '../../components/SearchBar.astro';
+import audioData from '../../data/audio.json';
+
+const { categories, scholars, items: allAudio } = audioData;
+---
+
+<BaseLayout
+  title="الصوتيات"
+  titleTi="ዝስማዕ"
+  description="محاضرات ودروس وخطب إسلامية صوتية"
+>
+  <!-- Page Header -->
+  <section class="hero-gradient text-white py-16">
+    <div class="container text-center">
+      <div class="trilingual-title items-center mb-6">
+        <h1 class="ar text-4xl font-bold text-white">الصوتيات الإسلامية</h1>
+        <p class="en text-xl text-accent font-medium">Islamic Audio</p>
+        <p class="ti text-lg text-white/80 font-ethiopic">እስላማዊ ዝስማዕ</p>
+      </div>
+      <p class="text-lg opacity-90 max-w-2xl mx-auto mb-4">
+        محاضرات ودروس وخطب وتلاوات من علمائنا
+      </p>
+      <p class="text-base opacity-75 max-w-2xl mx-auto mb-8">
+        Lectures, lessons, sermons and recitations from our scholars
+      </p>
+      <div class="flex justify-center">
+        <SearchBar placeholder="ابحث في الصوتيات..." />
+      </div>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <section class="bg-white border-b border-cream-dark sticky top-16 z-40">
+    <div class="container py-4">
+      <!-- Category Filter -->
+      <div class="flex flex-wrap gap-2 justify-center mb-4">
+        {categories.map((cat) => (
+          <button
+            class="category-btn px-4 py-2 rounded-full text-sm font-medium transition-colors border-2 border-transparent hover:border-primary data-[active]:bg-primary data-[active]:text-white"
+            data-category={cat.id}
+            data-active={cat.id === 'all' ? '' : undefined}
+          >
+            <span>{cat.labelAr}</span>
+            <span class="text-xs opacity-70 mr-1 font-ethiopic">({cat.labelTi})</span>
+          </button>
+        ))}
+      </div>
+
+      <!-- Scholar Filter -->
+      <div class="flex flex-wrap gap-2 justify-center">
+        <span class="text-sm text-text-light self-center ml-2">العالم:</span>
+        {scholars.map((scholar) => (
+          <button
+            class="scholar-btn px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-cream hover:bg-cream-dark data-[active]:bg-accent data-[active]:text-white"
+            data-scholar={scholar.id}
+            data-active={scholar.id === 'all' ? '' : undefined}
+          >
+            {scholar.labelAr}
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Audio Grid -->
+  <section class="py-12 bg-cream">
+    <div class="container">
+      <div class="flex items-center justify-between mb-8">
+        <p class="text-text-light">
+          عرض <span class="font-bold text-primary">{allAudio.length}</span> تسجيل
+        </p>
+        <select id="sort-select" class="bg-white border border-cream-dark rounded-lg px-4 py-2 text-sm focus:border-primary focus:outline-none">
+          <option value="newest">الأحدث أولاً</option>
+          <option value="duration">حسب المدة</option>
+          <option value="scholar">حسب العالم</option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="audio-grid">
+        {allAudio.map((audio, index) => (
+          <div class="audio-item" data-category={audio.category} data-scholar={audio.scholarName} data-duration={audio.duration} data-index={index}>
+            <AudioCard {...audio} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const categoryBtns = document.querySelectorAll('.category-btn');
+  const scholarBtns = document.querySelectorAll('.scholar-btn');
+  const audioItems = document.querySelectorAll('.audio-item');
+  const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
+  const audioGrid = document.getElementById('audio-grid');
+
+  let activeCategory = 'all';
+  let activeScholar = 'all';
+
+  function filterItems() {
+    audioItems.forEach(item => {
+      const itemCategory = item.getAttribute('data-category');
+      const itemScholar = item.getAttribute('data-scholar');
+
+      const categoryMatch = activeCategory === 'all' || itemCategory === activeCategory;
+      const scholarMatch = activeScholar === 'all' || itemScholar === activeScholar;
+
+      if (categoryMatch && scholarMatch) {
+        (item as HTMLElement).style.display = 'block';
+      } else {
+        (item as HTMLElement).style.display = 'none';
+      }
+    });
+  }
+
+  categoryBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      categoryBtns.forEach(b => b.removeAttribute('data-active'));
+      btn.setAttribute('data-active', '');
+      activeCategory = btn.getAttribute('data-category') || 'all';
+      filterItems();
+    });
+  });
+
+  scholarBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      scholarBtns.forEach(b => b.removeAttribute('data-active'));
+      btn.setAttribute('data-active', '');
+      activeScholar = btn.getAttribute('data-scholar') || 'all';
+      filterItems();
+    });
+  });
+
+  // Sorting functionality
+  function parseDuration(duration: string): number {
+    const parts = duration.split(':');
+    if (parts.length === 2) {
+      return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    }
+    return 0;
+  }
+
+  sortSelect?.addEventListener('change', () => {
+    const sortValue = sortSelect.value;
+    const items = Array.from(audioItems) as HTMLElement[];
+
+    items.sort((a, b) => {
+      if (sortValue === 'duration') {
+        const durationA = parseDuration(a.getAttribute('data-duration') || '0:00');
+        const durationB = parseDuration(b.getAttribute('data-duration') || '0:00');
+        return durationB - durationA; // Longest first
+      } else if (sortValue === 'scholar') {
+        const scholarA = a.getAttribute('data-scholar') || '';
+        const scholarB = b.getAttribute('data-scholar') || '';
+        return scholarA.localeCompare(scholarB, 'ar');
+      } else {
+        // newest - sort by original index
+        const indexA = parseInt(a.getAttribute('data-index') || '0');
+        const indexB = parseInt(b.getAttribute('data-index') || '0');
+        return indexA - indexB;
+      }
+    });
+
+    // Re-append items in new order
+    items.forEach(item => audioGrid?.appendChild(item));
+  });
+</script>
+
+<style>
+  .font-ethiopic {
+    font-family: var(--font-ethiopic);
+  }
+</style>

@@ -1,0 +1,32 @@
+---
+interface Props {
+  placeholder?: string;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const { placeholder = 'ابحث في الفتاوى والمقالات...', size = 'md' } = Astro.props;
+
+const sizeClasses = {
+  sm: 'py-2 px-4 text-sm',
+  md: 'py-3 px-5 text-base',
+  lg: 'py-4 px-6 text-lg',
+};
+---
+
+<form action="/search" method="GET" class="relative w-full max-w-2xl">
+  <input
+    type="search"
+    name="q"
+    placeholder={placeholder}
+    class={`w-full ${sizeClasses[size]} pr-4 pl-14 bg-white text-text-dark rounded-full border-2 border-transparent focus:border-accent focus:outline-none shadow-md placeholder:text-text-light`}
+  />
+  <button
+    type="submit"
+    class="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-primary hover:text-accent transition-colors"
+    aria-label="بحث"
+  >
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+  </button>
+</form>

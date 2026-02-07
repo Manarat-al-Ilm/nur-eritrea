@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#1A5C5A"/>
+  
+  <!-- Decorative pattern -->
+  <g opacity="0.1" fill="#C8A45C">
+    <circle cx="100" cy="100" r="80"/>
+    <circle cx="1100" cy="530" r="80"/>
+    <circle cx="1100" cy="100" r="40"/>
+    <circle cx="100" cy="530" r="40"/>
+  </g>
+  
+  <!-- Crescent and Star -->
+  <g transform="translate(500, 150)">
+    <path d="M120 0c-66 0-120 54-120 120s54 120 120 120c17 0 32-4 47-10-54-18-95-68-95-128s41-110 95-128c-15-6-30-10-47-10z" fill="#C8A45C"/>
+    <path d="M144 60l11 34h35l-29 21 11 34-28-21-29 21 11-34-28-21h35z" fill="#C8A45C"/>
+  </g>
+  
+  <!-- Arabic Title -->
+  <text x="600" y="420" text-anchor="middle" font-family="serif" font-size="72" font-weight="bold" fill="white">المنصة الإسلامية</text>
+  
+  <!-- English Subtitle -->
+  <text x="600" y="490" text-anchor="middle" font-family="sans-serif" font-size="36" fill="#C8A45C">Islamic Platform</text>
+  
+  <!-- Tigrinya -->
+  <text x="600" y="550" text-anchor="middle" font-family="sans-serif" font-size="28" fill="white" opacity="0.8">ኢስላሚያ መድረኽ</text>
+</svg>

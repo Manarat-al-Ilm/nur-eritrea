@@ -1,0 +1,199 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Get search query from URL
+const query = Astro.url.searchParams.get('q') || '';
+---
+
+<BaseLayout
+  title="البحث"
+  titleTi="ምድላይ"
+  description="ابحث في المحتوى الإسلامي"
+>
+  <!-- Page Header -->
+  <section class="hero-gradient text-white py-12">
+    <div class="container text-center">
+      <div class="trilingual-title items-center mb-6">
+        <h1 class="ar text-3xl font-bold text-white">نتائج البحث</h1>
+        <p class="en text-lg text-accent font-medium">Search Results</p>
+        <p class="ti text-base text-white/80 font-ethiopic">ውጽኢት ምድላይ</p>
+      </div>
+
+      <!-- Search Form -->
+      <form action="/search" method="GET" class="max-w-2xl mx-auto">
+        <div class="relative">
+          <input
+            type="search"
+            name="q"
+            value={query}
+            placeholder="ابحث في المحتوى... | Search content..."
+            class="w-full py-4 px-6 pr-14 bg-white rounded-full border-2 border-transparent focus:border-accent focus:outline-none shadow-md text-text-dark"
+            autofocus
+          />
+          <button
+            type="submit"
+            class="absolute left-3 top-1/2 -translate-y-1/2 p-2 text-primary hover:text-accent transition-colors"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Search Results -->
+  <section class="py-12 bg-cream min-h-[50vh]">
+    <div class="container">
+      {query ? (
+        <div class="max-w-4xl mx-auto">
+          <p class="text-text-light mb-8 text-center">
+            <span>نتائج البحث عن: </span>
+            <span class="font-bold text-primary">"{query}"</span>
+          </p>
+
+          <div id="search-results" class="space-y-4">
+            <!-- Results will be populated by JavaScript -->
+          </div>
+
+          <div id="no-results" class="hidden text-center py-12">
+            <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
+              <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 class="text-xl font-bold text-text-dark mb-2">لم يتم العثور على نتائج</h2>
+            <p class="text-text-light mb-1">No results found</p>
+            <p class="text-text-light font-ethiopic text-sm">ውጽኢት ኣይተረኽበን</p>
+          </div>
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
+            <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <h2 class="text-xl font-bold text-text-dark mb-2">ابدأ البحث</h2>
+          <p class="text-text-light mb-1">Start searching</p>
+          <p class="text-text-light font-ethiopic text-sm">ምድላይ ጀምሩ</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Quick Links -->
+  <section class="py-12 bg-white">
+    <div class="container text-center">
+      <h2 class="text-xl font-bold text-text-dark mb-6 font-amiri">أو تصفح الأقسام</h2>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="/books" class="btn btn-outline">الكتب</a>
+        <a href="/videos" class="btn btn-outline">الفيديوهات</a>
+        <a href="/audio" class="btn btn-outline">الصوتيات</a>
+        <a href="/scholars" class="btn btn-outline">سيرة العلماء</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline define:vars={{ query }}>
+  // Searchable content database
+  const searchableContent = [
+    // Books
+    { type: 'book', titleAr: 'الرحيق المختوم', titleTi: 'ኣልረሒቅ ኣልመኽቱም', description: 'سيرة نبوية شاملة', url: '/books', category: 'السيرة' },
+    { type: 'book', titleAr: 'الأصول الثلاثة', titleTi: 'እተን ሰለስተ መሰረታት', description: 'أصول العقيدة', url: '/books', category: 'العقيدة' },
+    { type: 'book', titleAr: 'الدين الصحيح', titleTi: 'እቲ ቅኑዕ ዲን', description: 'أصول الإسلام والإيمان', url: '/books', category: 'العقيدة' },
+    { type: 'book', titleAr: 'العشر الأخير من القرآن', titleTi: 'ናይ መወዳእታ ዓሰርተ ጁዝእ', description: 'تفسير ميسر', url: '/books', category: 'التفسير' },
+    { type: 'book', titleAr: 'العمرة والحج', titleTi: 'ዑምራን ሓጅን', description: 'دليل مناسك الحج والعمرة', url: '/books', category: 'الفقه' },
+
+    // Videos - Main scholars
+    { type: 'video', titleAr: 'فقه المعاملات', titleTi: 'ፊቅሂ ሙዓመላት', description: 'دروس الدكتور بيان صالح', url: '/videos', category: 'فقه' },
+    { type: 'video', titleAr: 'السيرة النبوية', titleTi: 'ሲራ ነብይ', description: 'دروس في سيرة الرسول', url: '/videos', category: 'سيرة' },
+    { type: 'video', titleAr: 'التفسير', titleTi: 'ተፍሲር', description: 'دروس الشيخ عبد العليم إدريس', url: '/videos', category: 'تفسير' },
+    { type: 'video', titleAr: 'أسماء الله الحسنى', titleTi: 'ኣስማእ ኣላህ ኣልሑስና', description: 'شرح الشيخ آدم عبد الله', url: '/videos', category: 'عقيدة' },
+    { type: 'video', titleAr: 'عمدة الأحكام', titleTi: 'ዑምደት ኣልሕካም', description: 'دروس الشيخ صالح سعيد', url: '/videos', category: 'حديث' },
+
+    // Audio
+    { type: 'audio', titleAr: 'محاضرات إسلامية', titleTi: 'መደረታት', description: 'محاضرات ودروس صوتية', url: '/audio', category: 'محاضرات' },
+    { type: 'audio', titleAr: 'خطب الجمعة', titleTi: 'ኹጥባ', description: 'خطب مسجلة', url: '/audio', category: 'خطب' },
+
+    // Scholars
+    { type: 'scholar', titleAr: 'علماء إريتريا', titleTi: 'መሻይኽ ኤርትራ', description: 'تاريخ وسير العلماء', url: '/scholars', category: 'تاريخ' },
+  ];
+
+  function searchContent(searchQuery) {
+    if (!searchQuery || searchQuery.trim() === '') return [];
+
+    const q = searchQuery.toLowerCase().trim();
+
+    return searchableContent.filter(item => {
+      return (
+        item.titleAr.toLowerCase().includes(q) ||
+        item.titleTi.toLowerCase().includes(q) ||
+        item.description.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q)
+      );
+    });
+  }
+
+  function renderResults(results) {
+    const container = document.getElementById('search-results');
+    const noResults = document.getElementById('no-results');
+
+    if (!container || !noResults) return;
+
+    if (results.length === 0) {
+      container.innerHTML = '';
+      noResults.classList.remove('hidden');
+      return;
+    }
+
+    noResults.classList.add('hidden');
+
+    const typeLabels = {
+      book: { ar: 'كتاب', icon: '📚' },
+      video: { ar: 'فيديو', icon: '🎬' },
+      audio: { ar: 'صوتي', icon: '🎧' },
+      scholar: { ar: 'سيرة', icon: '👤' },
+    };
+
+    container.innerHTML = results.map(item => {
+      const label = typeLabels[item.type] || { ar: 'محتوى', icon: '📄' };
+      return `
+        <a href="${item.url}" class="block card p-4 hover:border-primary border-2 border-transparent transition-all">
+          <div class="flex items-start gap-4">
+            <span class="text-2xl">${label.icon}</span>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="badge badge-primary text-xs">${label.ar}</span>
+                <span class="badge bg-cream text-text-light text-xs">${item.category}</span>
+              </div>
+              <h3 class="font-bold text-text-dark">${item.titleAr}</h3>
+              <p class="text-sm text-text-light font-ethiopic">${item.titleTi}</p>
+              <p class="text-sm text-text-light mt-1">${item.description}</p>
+            </div>
+            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </a>
+      `;
+    }).join('');
+  }
+
+  // Run search on page load if query exists
+  if (query) {
+    const results = searchContent(query);
+    renderResults(results);
+  }
+</script>
+
+<style>
+  .font-ethiopic {
+    font-family: var(--font-ethiopic);
+  }
+  .font-amiri {
+    font-family: var(--font-amiri);
+  }
+</style>

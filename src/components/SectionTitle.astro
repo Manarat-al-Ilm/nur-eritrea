@@ -1,0 +1,45 @@
+---
+interface Props {
+  titleAr: string;
+  titleEn: string;
+  titleTi: string;
+  href?: string;
+  centered?: boolean;
+}
+
+const { titleAr, titleEn, titleTi, href, centered = false } = Astro.props;
+---
+
+<div class={`flex ${centered ? 'flex-col items-center text-center' : 'items-end justify-between'} mb-8`}>
+  <div class="trilingual-title">
+    <h2 class="ar text-3xl font-bold text-text-dark font-amiri">{titleAr}</h2>
+    <p class="en text-lg text-primary font-medium">{titleEn}</p>
+    <p class="ti text-base text-text-light font-ethiopic">{titleTi}</p>
+  </div>
+
+  {href && (
+    <a
+      href={href}
+      class="text-primary hover:text-accent transition-colors flex items-center gap-2 text-sm font-medium"
+    >
+      View All
+      <svg class="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </a>
+  )}
+</div>
+
+<style>
+  .trilingual-title {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+  .font-amiri {
+    font-family: var(--font-amiri);
+  }
+  .font-ethiopic {
+    font-family: var(--font-ethiopic);
+  }
+</style>

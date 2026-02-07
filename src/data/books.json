@@ -1,0 +1,67 @@
+{
+  "categories": [
+    { "id": "all", "labelAr": "الكل", "labelTi": "ኩሉ" },
+    { "id": "العقيدة", "labelAr": "العقيدة", "labelTi": "ዓቂዳ" },
+    { "id": "الفقه", "labelAr": "الفقه", "labelTi": "ፊቅሂ" },
+    { "id": "الحديث", "labelAr": "الحديث", "labelTi": "ሓዲስ" },
+    { "id": "التفسير", "labelAr": "التفسير", "labelTi": "ተፍሲር" },
+    { "id": "السيرة", "labelAr": "السيرة", "labelTi": "ሲራ" },
+    { "id": "التزكية", "labelAr": "التزكية", "labelTi": "ተዝኪያ" }
+  ],
+  "books": [
+    {
+      "slug": "ar-raheeq-al-makhtum-ti",
+      "titleAr": "الرحيق المختوم",
+      "titleTi": "ኣልረሒቅ ኣልመኽቱም",
+      "author": "صفي الرحمن المباركفوري",
+      "translator": "ترجمة إلى التيغرينية",
+      "category": "السيرة",
+      "description": "سيرة نبوية شاملة حائزة على جائزة رابطة العالم الإسلامي، مترجمة إلى التيغرينية.",
+      "pdfUrl": "/books/ar-raheeq-al-makhtum-ti.pdf",
+      "pages": 480
+    },
+    {
+      "slug": "usool-thalatha-ti",
+      "titleAr": "الأصول الثلاثة",
+      "titleTi": "እተን ሰለስተ መሰረታት",
+      "author": "الشيخ محمد بن عبدالوهاب",
+      "translator": "ترجمة إلى التيغرينية",
+      "category": "العقيدة",
+      "description": "رسالة مختصرة في أصول العقيدة: معرفة الرب والدين والنبي، مترجمة إلى التيغرينية مع الأدلة.",
+      "pdfUrl": "/books/usool-thalatha-ti.pdf",
+      "pages": 50
+    },
+    {
+      "slug": "ad-deen-as-sahih",
+      "titleAr": "الدين الصحيح",
+      "titleTi": "እቲ ቅኑዕ ዲን",
+      "author": "الشيخ عبد الرحمن بن حماد العمر",
+      "category": "العقيدة",
+      "description": "كتاب في بيان الدين الصحيح وأصول الإسلام والإيمان.",
+      "pdfUrl": "/books/ad-deen-as-sahih.pdf",
+      "pages": 29
+    },
+    {
+      "slug": "al-ushr-al-akhir-ti",
+      "titleAr": "العشر الأخير من القرآن الكريم",
+      "titleTi": "ናይ መወዳእታ ዓሰርተ ጁዝእ ቁርኣን",
+      "author": "إعداد وزارة الشؤون الإسلامية",
+      "translator": "ترجمة إلى التيغرينية",
+      "category": "التفسير",
+      "description": "تفسير ميسر للعشر الأخير من القرآن الكريم مع أدعية وأذكار، مترجم إلى التيغرينية.",
+      "pdfUrl": "/books/al-ushr-al-akhir-ti.pdf",
+      "pages": 120
+    },
+    {
+      "slug": "umrah-wa-hajj-ti",
+      "titleAr": "العمرة والحج",
+      "titleTi": "ዑምራን ሓጅን",
+      "author": "دليل الحاج والمعتمر",
+      "translator": "ترجمة إلى التيغرينية",
+      "category": "الفقه",
+      "description": "دليل شامل لمناسك العمرة والحج خطوة بخطوة، مترجم إلى التيغرينية.",
+      "pdfUrl": "/books/umrah-wa-hajj-ti.pdf",
+      "pages": 64
+    }
+  ]
+}
