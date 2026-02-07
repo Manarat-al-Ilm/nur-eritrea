@@ -17,7 +17,7 @@
       "translator": "ترجمة إلى التيغرينية",
       "category": "السيرة",
       "description": "سيرة نبوية شاملة حائزة على جائزة رابطة العالم الإسلامي، مترجمة إلى التيغرينية.",
-      "pdfUrl": "/books/ar-raheeq-al-makhtum-ti.pdf",
+      "pdfUrl": "https://github.com/Manarat-al-Ilm/nur-eritrea/releases/download/v1.0-books/ar-raheeq-al-makhtum-ti.pdf",
       "pages": 480
     },
     {
@@ -28,7 +28,7 @@
       "translator": "ترجمة إلى التيغرينية",
       "category": "العقيدة",
       "description": "رسالة مختصرة في أصول العقيدة: معرفة الرب والدين والنبي، مترجمة إلى التيغرينية مع الأدلة.",
-      "pdfUrl": "/books/usool-thalatha-ti.pdf",
+      "pdfUrl": "https://github.com/Manarat-al-Ilm/nur-eritrea/releases/download/v1.0-books/usool-thalatha-ti.pdf",
       "pages": 50
     },
     {
@@ -38,7 +38,7 @@
       "author": "الشيخ عبد الرحمن بن حماد العمر",
       "category": "العقيدة",
       "description": "كتاب في بيان الدين الصحيح وأصول الإسلام والإيمان.",
-      "pdfUrl": "/books/ad-deen-as-sahih.pdf",
+      "pdfUrl": "https://github.com/Manarat-al-Ilm/nur-eritrea/releases/download/v1.0-books/ad-deen-as-sahih.pdf",
       "pages": 29
     },
     {
@@ -49,7 +49,7 @@
       "translator": "ترجمة إلى التيغرينية",
       "category": "التفسير",
       "description": "تفسير ميسر للعشر الأخير من القرآن الكريم مع أدعية وأذكار، مترجم إلى التيغرينية.",
-      "pdfUrl": "/books/al-ushr-al-akhir-ti.pdf",
+      "pdfUrl": "https://github.com/Manarat-al-Ilm/nur-eritrea/releases/download/v1.0-books/al-ushr-al-akhir-ti.pdf",
       "pages": 120
     },
     {
@@ -60,7 +60,7 @@
       "translator": "ترجمة إلى التيغرينية",
       "category": "الفقه",
       "description": "دليل شامل لمناسك العمرة والحج خطوة بخطوة، مترجم إلى التيغرينية.",
-      "pdfUrl": "/books/umrah-wa-hajj-ti.pdf",
+      "pdfUrl": "https://github.com/Manarat-al-Ilm/nur-eritrea/releases/download/v1.0-books/umrah-wa-hajj-ti.pdf",
       "pages": 64
     }
   ]
