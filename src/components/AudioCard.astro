@@ -78,7 +78,7 @@ const badgeColor = categoryColors[category] || 'bg-primary';
             <span>استمع</span>
           </a>
         ) : audioUrl && (
-          <audio controls class="h-8 w-full max-w-[200px]">
+          <audio controls preload="none" class="h-8 w-full max-w-[200px]">
             <source src={audioUrl} type="audio/mpeg" />
           </audio>
         )}

@@ -11,18 +11,29 @@ import videosData from '../data/videos.json';
 import audioData from '../data/audio.json';
 import scholarsData from '../data/scholars.json';
 
+// Audio lives in series (e.g. tafsir lessons) plus standalone items
+const allAudioItems = [
+  ...audioData.items,
+  ...audioData.series.flatMap(s =>
+    s.items.map(i => ({ ...i, scholarName: s.scholarAr, category: 'دروس' }))
+  ),
+];
+
 // Stats from JSON data
 const stats = [
   { labelAr: 'كتاب', labelTi: 'መጽሓፍ', count: booksData.books.length, icon: 'book' },
   { labelAr: 'فيديو', labelTi: 'ቪድዮ', count: videosData.videos.length, icon: 'video' },
-  { labelAr: 'صوتي', labelTi: 'ዝስማዕ', count: audioData.items.length, icon: 'audio' },
+  { labelAr: 'صوتي', labelTi: 'ዝስማዕ', count: allAudioItems.length, icon: 'audio' },
   { labelAr: 'عالم', labelTi: 'ዓሊም', count: videosData.scholars.length, icon: 'scholar' },
 ];
 
 // Featured items from JSON (last 2-3 of each = newest)
 const featuredBooks = booksData.books.slice(-2).reverse();
 const featuredVideos = videosData.videos.slice(-3).reverse().map(v => ({ ...v, duration: '' }));
-const featuredAudio = audioData.items.slice(-2).reverse();
+// Series items are in Quran order, so pick the newest by date instead
+const featuredAudio = [...allAudioItems]
+  .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
+  .slice(0, 2);
 
 // Main navigation sections
 const sections = [

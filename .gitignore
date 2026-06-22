@@ -17,6 +17,7 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+.dev.vars
 
 # macOS
 .DS_Store
@@ -34,3 +35,9 @@ Thumbs.db
 
 # Large files (PDFs hosted elsewhere or on Cloudflare)
 public/books/*.pdf
+telegram-audio
+telegram-audio-encoded/
+
+# credentials & local tooling state
+scripts/.telegram-session
+.wrangler/

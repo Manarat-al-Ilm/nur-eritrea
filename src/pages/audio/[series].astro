@@ -1,0 +1,273 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import audioData from '../../data/audio.json';
+
+export function getStaticPaths() {
+  return audioData.series.map((s) => ({
+    params: { series: s.slug },
+    props: { series: s },
+  }));
+}
+
+const { series } = Astro.props;
+
+const totalSeconds = series.items.reduce((sum, i) => sum + (i.durationSeconds || 0), 0);
+const totalHours = Math.round(totalSeconds / 3600);
+
+const groupsWithItems = series.groups.map((g) => ({
+  ...g,
+  items: series.items.filter((i) => i.group === g.number),
+}));
+const ungrouped = series.items.filter((i) => i.group === null);
+---
+
+<BaseLayout
+  title={series.titleAr}
+  titleTi={series.titleTi}
+  description={`${series.descriptionAr} - ${series.scholarAr}`}
+>
+  <!-- Series Header -->
+  <section class="hero-gradient text-white py-14">
+    <div class="container text-center">
+      <div class="trilingual-title items-center mb-4">
+        <h1 class="ar text-3xl md:text-4xl font-bold text-white font-amiri">{series.titleAr}</h1>
+        <p class="ti text-lg text-white/80 font-ethiopic">{series.titleTi}</p>
+      </div>
+      <p class="text-lg opacity-90 mb-1">
+        {series.scholarAr}
+        <span class="font-ethiopic text-base opacity-80">| {series.scholarTi}</span>
+      </p>
+      <p class="text-sm opacity-75 font-ethiopic mb-6">{series.descriptionTi}</p>
+
+      <div class="flex flex-wrap justify-center gap-3 text-sm">
+        <span class="bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5">{series.items.length} درس</span>
+        {series.groups.length > 0 && (
+          <span class="bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5">{series.groups.length} سورة</span>
+        )}
+        <span class="bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5"><span dir="ltr">~{totalHours}</span> ساعة</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lesson search -->
+  <section class="bg-white border-b border-cream-dark sticky top-16 z-40">
+    <div class="container py-3">
+      <input
+        id="lesson-search"
+        type="search"
+        placeholder="ابحث عن سورة أو درس... | ሱራ ወይ ትምህርቲ ድለ..."
+        class="w-full max-w-xl mx-auto block bg-cream border border-cream-dark rounded-full px-5 py-2 text-sm focus:border-primary focus:outline-none"
+      />
+    </div>
+  </section>
+
+  <!-- Surah groups -->
+  <section class="py-10 bg-cream">
+    <div class="container max-w-4xl">
+      <div class="flex flex-col gap-4" id="groups">
+        {groupsWithItems.map((group, gi) => (
+          <details class="card overflow-hidden group-details" open={gi === 0} data-group>
+            <summary class="flex items-center gap-4 px-5 py-4 cursor-pointer select-none hover:bg-cream/50 transition-colors">
+              <span class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary-dark text-white flex items-center justify-center font-bold flex-shrink-0">
+                <span dir="ltr">{group.number}</span>
+              </span>
+              <span class="flex-1 min-w-0">
+                <span class="block text-lg font-bold text-text-dark font-amiri">سورة {group.nameAr}</span>
+                <span class="block text-xs text-text-light font-ethiopic">{group.nameTi}</span>
+              </span>
+              <span class="badge bg-accent text-white text-xs flex-shrink-0">{group.items.length} درس</span>
+              <svg class="chevron w-5 h-5 text-text-light transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+
+            <ul class="border-t border-cream-dark divide-y divide-cream-dark">
+              {group.items.map((item) => (
+                <li
+                  class="lesson flex items-center gap-3 px-5 py-3 hover:bg-cream/60 transition-colors"
+                  data-search={`${item.titleTi} ${item.titleAr} ${item.verses ?? ''} ${group.nameAr} ${group.nameTi}`}
+                >
+                  <button
+                    type="button"
+                    class="play-btn w-10 h-10 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white flex items-center justify-center flex-shrink-0 transition-colors"
+                    data-src={item.audioUrl}
+                    data-title={item.titleTi}
+                    aria-label={`تشغيل: ${item.titleAr}`}
+                  >
+                    <svg class="icon-play w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    <svg class="icon-pause w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+                  </button>
+
+                  <span class="flex-1 min-w-0">
+                    <span class="block text-sm font-medium text-text-dark font-ethiopic truncate">{item.titleTi}</span>
+                    <span class="block text-xs text-text-light">{item.titleAr}</span>
+                  </span>
+
+                  {item.verses && (
+                    <span class="hidden sm:inline-block badge bg-primary/10 text-primary text-xs flex-shrink-0">
+                      الآيات <span dir="ltr">{item.verses}</span>
+                    </span>
+                  )}
+                  <span class="text-xs text-text-light flex-shrink-0" dir="ltr">{item.duration}</span>
+
+                  <a
+                    href={item.audioUrl}
+                    download
+                    class="text-text-light hover:text-primary transition-colors flex-shrink-0"
+                    aria-label={`تحميل: ${item.titleAr}`}
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        ))}
+      </div>
+
+      {ungrouped.length > 0 && (
+        <ul class="card mt-4 divide-y divide-cream-dark">
+          {ungrouped.map((item) => (
+            <li class="lesson flex items-center gap-3 px-5 py-3" data-search={`${item.titleTi} ${item.titleAr}`}>
+              <button type="button" class="play-btn w-10 h-10 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white flex items-center justify-center flex-shrink-0 transition-colors" data-src={item.audioUrl} data-title={item.titleTi}>
+                <svg class="icon-play w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <svg class="icon-pause w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+              </button>
+              <span class="flex-1 min-w-0">
+                <span class="block text-sm font-medium text-text-dark font-ethiopic truncate">{item.titleTi}</span>
+                <span class="block text-xs text-text-light">{item.titleAr}</span>
+              </span>
+              <span class="text-xs text-text-light flex-shrink-0" dir="ltr">{item.duration}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <p id="no-results" class="hidden text-center text-text-light py-10">
+        لا توجد نتائج | ውጽኢት የለን
+      </p>
+    </div>
+  </section>
+
+  <!-- Spacer so the fixed player never covers the last rows -->
+  <div id="player-spacer" class="hidden h-28 sm:h-20"></div>
+
+  <!-- Shared sticky player -->
+  <div id="player-bar" class="hidden fixed bottom-0 inset-x-0 bg-white border-t border-cream-dark shadow-[0_-4px_12px_rgba(0,0,0,0.08)] z-50">
+    <div class="container max-w-4xl py-2 sm:py-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-1 sm:gap-4">
+      <p id="player-title" class="flex-1 min-w-0 text-sm font-medium text-text-dark font-ethiopic truncate"></p>
+      <audio id="player" controls preload="none" class="w-full sm:max-w-md h-10"></audio>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const player = document.getElementById('player') as HTMLAudioElement;
+  const playerBar = document.getElementById('player-bar')!;
+  const playerSpacer = document.getElementById('player-spacer')!;
+  const playerTitle = document.getElementById('player-title')!;
+  const playButtons = Array.from(document.querySelectorAll('.play-btn')) as HTMLButtonElement[];
+
+  let activeBtn: HTMLButtonElement | null = null;
+
+  function setPlayingUI(btn: HTMLButtonElement | null, playing: boolean) {
+    playButtons.forEach((b) => {
+      const isActive = playing && b === btn;
+      b.querySelector('.icon-play')!.classList.toggle('hidden', isActive);
+      b.querySelector('.icon-pause')!.classList.toggle('hidden', !isActive);
+      b.closest('.lesson')?.classList.toggle('playing', b === btn);
+    });
+  }
+
+  function playLesson(btn: HTMLButtonElement) {
+    const src = btn.getAttribute('data-src')!;
+    playerBar.classList.remove('hidden');
+    playerSpacer.classList.remove('hidden');
+    if (player.src !== src) {
+      player.src = src;
+      playerTitle.textContent = btn.getAttribute('data-title');
+    }
+    activeBtn = btn;
+    player.play();
+  }
+
+  playButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (activeBtn === btn && !player.paused) {
+        player.pause();
+      } else {
+        playLesson(btn);
+      }
+    });
+  });
+
+  player.addEventListener('play', () => setPlayingUI(activeBtn, true));
+  player.addEventListener('pause', () => setPlayingUI(activeBtn, false));
+
+  // Auto-continue with the next lesson of the series
+  player.addEventListener('ended', () => {
+    const i = activeBtn ? playButtons.indexOf(activeBtn) : -1;
+    const next = i >= 0 ? playButtons[i + 1] : null;
+    if (next) {
+      next.closest('details')?.setAttribute('open', '');
+      playLesson(next);
+    }
+  });
+
+  // Lesson search: filter rows, open groups with matches
+  const searchInput = document.getElementById('lesson-search') as HTMLInputElement;
+  const lessons = Array.from(document.querySelectorAll('.lesson')) as HTMLElement[];
+  const groups = Array.from(document.querySelectorAll('[data-group]')) as HTMLDetailsElement[];
+  const noResults = document.getElementById('no-results')!;
+
+  searchInput?.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    let any = false;
+
+    lessons.forEach((row) => {
+      const match = q === '' || (row.getAttribute('data-search') || '').toLowerCase().includes(q);
+      row.style.display = match ? '' : 'none';
+      if (match) any = true;
+    });
+
+    groups.forEach((g, gi) => {
+      const visible = Array.from(g.querySelectorAll('.lesson')).some(
+        (r) => (r as HTMLElement).style.display !== 'none'
+      );
+      g.style.display = visible ? '' : 'none';
+      if (q !== '') {
+        g.open = visible;
+      } else if (gi !== 0) {
+        g.open = false;
+      } else {
+        g.open = true;
+      }
+    });
+
+    noResults.classList.toggle('hidden', any);
+  });
+</script>
+
+<style>
+  .font-amiri {
+    font-family: var(--font-amiri);
+  }
+  .font-ethiopic {
+    font-family: var(--font-ethiopic);
+  }
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+  details[open] .chevron {
+    transform: rotate(180deg);
+  }
+  .lesson.playing {
+    background-color: color-mix(in srgb, var(--color-primary, #1a5c5a) 8%, white);
+  }
+  .lesson.playing .play-btn {
+    background-color: var(--color-primary, #1a5c5a);
+    color: white;
+  }
+</style>
