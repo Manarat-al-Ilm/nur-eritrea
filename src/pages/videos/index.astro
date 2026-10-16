@@ -1,10 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import VideoCard from '../../components/VideoCard.astro';
 import SearchBar from '../../components/SearchBar.astro';
 import videosData from '../../data/videos.json';
 
-const { scholars, videos: allVideos } = videosData;
+const { scholars, collections, videos } = videosData;
 ---
 
 <BaseLayout
@@ -20,26 +19,20 @@ const { scholars, videos: allVideos } = videosData;
         <p class="en text-xl text-accent font-medium">Video Lessons</p>
         <p class="ti text-lg text-white/80 font-ethiopic">ቪድዮታት</p>
       </div>
-      <p class="text-lg opacity-90 max-w-2xl mx-auto mb-4" id="page-subtitle">
+      <p class="text-lg opacity-90 max-w-2xl mx-auto mb-4">
         اختر أحد العلماء لمشاهدة دروسه
       </p>
       <p class="text-base opacity-75 max-w-2xl mx-auto mb-8">
         Select a scholar to watch their lessons
       </p>
-      <button type="button" id="back-btn" class="hidden bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center gap-3">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        <div class="flex flex-col items-start text-right">
-          <span class="text-base font-semibold">العودة لقائمة العلماء</span>
-          <span class="text-xs opacity-80">Back to Scholars | ናብ ዓሊማት ተመለሱ</span>
-        </div>
-      </button>
+      <div class="flex justify-center">
+        <SearchBar placeholder="ابحث في الفيديوهات..." />
+      </div>
     </div>
   </section>
 
   <!-- Scholars Selection -->
-  <section id="scholars-section" class="py-16 bg-cream">
+  <section class="py-16 bg-cream">
     <div class="container">
       <div class="text-center mb-12">
         <h2 class="text-2xl font-bold text-text-dark mb-1 font-amiri">اختر العالم</h2>
@@ -49,27 +42,25 @@ const { scholars, videos: allVideos } = videosData;
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
         {scholars.map((scholar) => (
-          <button
-            type="button"
-            class="scholar-btn card p-8 text-center group hover:border-primary border-2 border-transparent transition-all cursor-pointer w-full"
-            data-scholar-id={scholar.id}
-            data-scholar-name-ar={scholar.nameAr}
-            data-scholar-name-ti={scholar.nameTi}
-            data-scholar-specialty={scholar.specialty}
-            data-scholar-video-count={scholar.videoCount}
+          <a
+            href={`/videos/${scholar.id}`}
+            class="card p-8 text-center group hover:border-primary border-2 border-transparent transition-all block"
           >
             <div class="w-24 h-24 rounded-full mx-auto mb-4 bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center group-hover:scale-105 transition-transform">
-              <span class="text-3xl text-white font-amiri">
-                {scholar.nameAr.split(' ')[0].charAt(0)}
-              </span>
+              <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
             </div>
 
             <h3 class="text-xl font-bold text-text-dark mb-1 font-amiri group-hover:text-primary transition-colors">
               {scholar.nameAr}
             </h3>
-            <p class="text-sm text-text-light font-ethiopic mb-2">{scholar.nameTi}</p>
-            <p class="text-accent text-sm font-medium mb-4">{scholar.specialty}</p>
-            <p class="text-sm text-text-light mb-4">{scholar.bio}</p>
+            {scholar.nameTi && (
+              <p class="text-sm text-text-light font-ethiopic mb-2">{scholar.nameTi}</p>
+            )}
+            {scholar.specialty && (
+              <p class="text-accent text-sm font-medium mb-4">{scholar.specialty}</p>
+            )}
 
             <div class="flex justify-center items-center gap-2 pt-4 border-t border-cream-dark">
               <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,51 +69,41 @@ const { scholars, videos: allVideos } = videosData;
               <span class="text-lg font-bold text-primary">{scholar.videoCount}</span>
               <span class="text-sm text-text-light">فيديو | videos</span>
             </div>
-          </button>
+          </a>
         ))}
       </div>
+
+      <!-- Lessons whose speaker the title does not name -->
+      {collections.filter((c) => c.videoCount > 0).map((collection) => (
+        <div class="max-w-4xl mx-auto mt-8">
+          <a
+            href={`/videos/${collection.id}`}
+            class="card p-6 flex items-center gap-5 group hover:border-primary border-2 border-transparent transition-all"
+          >
+            <div class="w-14 h-14 rounded-full bg-cream-dark flex items-center justify-center flex-shrink-0">
+              <svg class="w-7 h-7 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0 text-right">
+              <h3 class="text-lg font-bold text-text-dark font-amiri group-hover:text-primary transition-colors">
+                {collection.nameAr}
+              </h3>
+              {collection.nameTi && (
+                <p class="text-sm text-text-light font-ethiopic">{collection.nameTi}</p>
+              )}
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span class="text-lg font-bold text-primary">{collection.videoCount}</span>
+              <span class="text-sm text-text-light">فيديو</span>
+            </div>
+          </a>
+        </div>
+      ))}
     </div>
   </section>
 
-  <!-- Scholar's Videos (hidden initially) -->
-  <section id="videos-section" class="py-12 bg-cream hidden">
-    <div class="container">
-      <!-- Scholar Info Card -->
-      <div id="scholar-info-card" class="card p-6 mb-8 flex flex-col md:flex-row items-center gap-6">
-        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center flex-shrink-0">
-          <span id="scholar-initial" class="text-2xl text-white font-amiri"></span>
-        </div>
-        <div class="text-center md:text-right flex-1">
-          <h2 id="scholar-name-ar" class="text-2xl font-bold text-text-dark font-amiri"></h2>
-          <p id="scholar-name-ti" class="text-text-light font-ethiopic"></p>
-          <p id="scholar-specialty" class="text-accent text-sm mt-1"></p>
-        </div>
-        <div class="text-center">
-          <span id="video-count" class="text-3xl font-bold text-primary"></span>
-          <p class="text-sm text-text-light">فيديو | videos</p>
-        </div>
-      </div>
-
-      <!-- Videos Grid -->
-      <div id="videos-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {allVideos.map((video) => (
-          <div class="video-item hidden" data-scholar-id={video.scholarId}>
-            <VideoCard
-              slug={video.slug}
-              youtubeId={video.youtubeId}
-              titleAr={video.titleAr}
-              titleTi={video.titleTi}
-              scholarName={video.scholarName}
-              seriesName={video.seriesName}
-              duration=""
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- YouTube Channels Link -->
+  <!-- YouTube Channel Link -->
   <section class="py-12 bg-white">
     <div class="container text-center">
       <div class="trilingual-title items-center mb-6">
@@ -130,6 +111,9 @@ const { scholars, videos: allVideos } = videosData;
         <p class="en text-lg text-primary font-medium">Watch on YouTube</p>
         <p class="ti text-base text-text-light font-ethiopic">ኣብ ዩቱብ ተኸታተሉ</p>
       </div>
+      <p class="text-text-light mb-6">
+        جميع الدروس متوفرة أيضاً على القناة — <span class="font-bold text-primary">{videos.length}</span> فيديو
+      </p>
       <div class="flex flex-wrap justify-center gap-4">
         <a
           href="https://www.youtube.com/@Hemona2015/videos"
@@ -145,177 +129,13 @@ const { scholars, videos: allVideos } = videosData;
       </div>
     </div>
   </section>
-  <!-- Video Modal -->
-  <div id="video-modal" class="fixed inset-0 z-[100] hidden">
-    <!-- Backdrop -->
-    <div id="modal-backdrop" class="absolute inset-0 bg-black/80"></div>
-
-    <!-- Modal Content -->
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-      <div class="relative w-full max-w-4xl bg-white rounded-xl overflow-hidden shadow-2xl">
-        <!-- Close Button -->
-        <button
-          id="modal-close"
-          type="button"
-          class="absolute top-4 left-4 z-10 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors"
-        >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-
-        <!-- Video Container -->
-        <div class="aspect-video bg-black">
-          <iframe
-            id="video-iframe"
-            class="w-full h-full"
-            src=""
-            title="Video Player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
-        </div>
-
-        <!-- Video Info -->
-        <div class="p-4 bg-white">
-          <h3 id="modal-title-ar" class="text-xl font-bold text-text-dark font-amiri mb-1"></h3>
-          <p id="modal-title-ti" class="text-sm text-text-light font-ethiopic mb-2"></p>
-          <div class="flex items-center gap-2 text-sm text-text-light">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-            <span id="modal-scholar-name"></span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </BaseLayout>
 
-<script is:inline>
-  // Scholar selection handling
-  const scholarBtns = document.querySelectorAll('.scholar-btn');
-  const scholarsSection = document.getElementById('scholars-section');
-  const videosSection = document.getElementById('videos-section');
-  const videoItems = document.querySelectorAll('.video-item');
-  const backBtn = document.getElementById('back-btn');
-  const pageSubtitle = document.getElementById('page-subtitle');
-
-  // Scholar info elements
-  const scholarInitial = document.getElementById('scholar-initial');
-  const scholarNameAr = document.getElementById('scholar-name-ar');
-  const scholarNameTi = document.getElementById('scholar-name-ti');
-  const scholarSpecialty = document.getElementById('scholar-specialty');
-  const videoCount = document.getElementById('video-count');
-
-  function showScholarVideos(scholarId, nameAr, nameTi, specialty) {
-    // Update scholar info
-    if (scholarInitial) scholarInitial.textContent = nameAr.split(' ')[0].charAt(0);
-    if (scholarNameAr) scholarNameAr.textContent = nameAr;
-    if (scholarNameTi) scholarNameTi.textContent = nameTi;
-    if (scholarSpecialty) scholarSpecialty.textContent = specialty;
-
-    // Count and show matching videos
-    let count = 0;
-    videoItems.forEach((item) => {
-      if (item.getAttribute('data-scholar-id') === scholarId) {
-        item.classList.remove('hidden');
-        count++;
-      } else {
-        item.classList.add('hidden');
-      }
-    });
-    if (videoCount) videoCount.textContent = count.toString();
-
-    // Toggle sections
-    scholarsSection?.classList.add('hidden');
-    videosSection?.classList.remove('hidden');
-    backBtn?.classList.remove('hidden');
-    if (pageSubtitle) pageSubtitle.textContent = `دروس ${nameAr}`;
-
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function showScholars() {
-    scholarsSection?.classList.remove('hidden');
-    videosSection?.classList.add('hidden');
-    backBtn?.classList.add('hidden');
-    if (pageSubtitle) pageSubtitle.textContent = 'اختر أحد العلماء لمشاهدة دروسه';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // Event listeners
-  scholarBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const scholarId = btn.getAttribute('data-scholar-id') || '';
-      const nameAr = btn.getAttribute('data-scholar-name-ar') || '';
-      const nameTi = btn.getAttribute('data-scholar-name-ti') || '';
-      const specialty = btn.getAttribute('data-scholar-specialty') || '';
-      showScholarVideos(scholarId, nameAr, nameTi, specialty);
-    });
-  });
-
-  backBtn?.addEventListener('click', (e) => {
-    e.preventDefault();
-    showScholars();
-  });
-
-  // Video Modal handling
-  const videoModal = document.getElementById('video-modal');
-  const modalBackdrop = document.getElementById('modal-backdrop');
-  const modalClose = document.getElementById('modal-close');
-  const videoIframe = document.getElementById('video-iframe');
-  const modalTitleAr = document.getElementById('modal-title-ar');
-  const modalTitleTi = document.getElementById('modal-title-ti');
-  const modalScholarName = document.getElementById('modal-scholar-name');
-
-  function openVideoModal(youtubeId, titleAr, titleTi, scholarName) {
-    if (videoIframe) {
-      videoIframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`;
-    }
-    if (modalTitleAr) modalTitleAr.textContent = titleAr;
-    if (modalTitleTi) modalTitleTi.textContent = titleTi;
-    if (modalScholarName) modalScholarName.textContent = scholarName;
-    videoModal?.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeVideoModal() {
-    videoModal?.classList.add('hidden');
-    if (videoIframe) videoIframe.src = '';
-    document.body.style.overflow = '';
-  }
-
-  // Add click listeners to all video cards
-  document.querySelectorAll('.video-card-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const youtubeId = btn.getAttribute('data-youtube-id') || '';
-      const titleAr = btn.getAttribute('data-title-ar') || '';
-      const titleTi = btn.getAttribute('data-title-ti') || '';
-      const scholarName = btn.getAttribute('data-scholar-name') || '';
-      openVideoModal(youtubeId, titleAr, titleTi, scholarName);
-    });
-  });
-
-  // Close modal handlers
-  modalClose?.addEventListener('click', closeVideoModal);
-  modalBackdrop?.addEventListener('click', closeVideoModal);
-
-  // Close on Escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !videoModal?.classList.contains('hidden')) {
-      closeVideoModal();
-    }
-  });
-</script>
-
 <style>
-  .font-ethiopic {
-    font-family: var(--font-ethiopic);
-  }
   .font-amiri {
     font-family: var(--font-amiri);
+  }
+  .font-ethiopic {
+    font-family: var(--font-ethiopic);
   }
 </style>

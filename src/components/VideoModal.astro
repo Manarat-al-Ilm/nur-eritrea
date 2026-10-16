@@ -1,0 +1,97 @@
+---
+// Shared video lightbox. Include once per page that renders VideoCards.
+// The YouTube iframe is only given a src when a card is opened and is
+// cleared on close, so no embed loads until the visitor asks for one.
+---
+
+<div id="video-modal" class="fixed inset-0 z-[100] hidden">
+  <div id="modal-backdrop" class="absolute inset-0 bg-black/80"></div>
+
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="relative w-full max-w-4xl bg-white rounded-xl overflow-hidden shadow-2xl">
+      <button
+        id="modal-close"
+        type="button"
+        class="absolute top-4 left-4 z-10 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors"
+        aria-label="إغلاق"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div class="aspect-video bg-black">
+        <iframe
+          id="video-iframe"
+          class="w-full h-full"
+          src=""
+          title="Video Player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+
+      <div class="p-4 bg-white">
+        <h3 id="modal-title-ar" class="text-xl font-bold text-text-dark font-amiri mb-1"></h3>
+        <p id="modal-title-ti" class="text-sm text-text-light font-ethiopic mb-2"></p>
+        <div class="flex items-center gap-2 text-sm text-text-light">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          <span id="modal-scholar-name"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const videoModal = document.getElementById('video-modal');
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const modalClose = document.getElementById('modal-close');
+    const videoIframe = document.getElementById('video-iframe');
+    const modalTitleAr = document.getElementById('modal-title-ar');
+    const modalTitleTi = document.getElementById('modal-title-ti');
+    const modalScholarName = document.getElementById('modal-scholar-name');
+
+    function openVideoModal(youtubeId, titleAr, titleTi, scholarName) {
+      if (videoIframe) {
+        videoIframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`;
+      }
+      if (modalTitleAr) modalTitleAr.textContent = titleAr;
+      if (modalTitleTi) modalTitleTi.textContent = titleTi;
+      if (modalScholarName) modalScholarName.textContent = scholarName;
+      videoModal?.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeVideoModal() {
+      videoModal?.classList.add('hidden');
+      // about:blank, not '': an empty src makes the iframe reload the
+      // current page into itself.
+      if (videoIframe) videoIframe.src = 'about:blank';
+      document.body.style.overflow = '';
+    }
+
+    // One delegated listener instead of one per card — the grids hold
+    // hundreds of cards.
+    document.addEventListener('click', (e) => {
+      const btn = e.target instanceof Element ? e.target.closest('.video-card-btn') : null;
+      if (!btn) return;
+      openVideoModal(
+        btn.getAttribute('data-youtube-id') || '',
+        btn.getAttribute('data-title-ar') || '',
+        btn.getAttribute('data-title-ti') || '',
+        btn.getAttribute('data-scholar-name') || ''
+      );
+    });
+
+    modalClose?.addEventListener('click', closeVideoModal);
+    modalBackdrop?.addEventListener('click', closeVideoModal);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !videoModal?.classList.contains('hidden')) closeVideoModal();
+    });
+  })();
+</script>

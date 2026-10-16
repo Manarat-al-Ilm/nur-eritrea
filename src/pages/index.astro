@@ -29,7 +29,7 @@ const stats = [
 
 // Featured items from JSON (last 2-3 of each = newest)
 const featuredBooks = booksData.books.slice(-2).reverse();
-const featuredVideos = videosData.videos.slice(-3).reverse().map(v => ({ ...v, duration: '' }));
+const featuredVideos = videosData.videos.slice(-3).reverse();
 // Series items are in Quran order, so pick the newest by date instead
 const featuredAudio = [...allAudioItems]
   .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
