@@ -1,0 +1,796 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export const prerender = false;
+
+const sections = [
+  { id: 'qa', labelAr: 'سؤال وجواب', labelEn: 'Q&A', active: true },
+];
+---
+
+<BaseLayout
+  title="لوحة الإدارة"
+  titleTi="ምምሕዳር"
+  description="لوحة إدارة المنصة"
+>
+  <!-- Header -->
+  <section class="hero-gradient text-white py-8">
+    <div class="container">
+      <h1 class="text-3xl font-bold font-amiri mb-1">لوحة الإدارة</h1>
+      <p class="text-accent text-sm">Admin Panel</p>
+    </div>
+  </section>
+
+  <!-- Navigation Tabs -->
+  <div class="bg-white border-b border-cream-dark">
+    <div class="container flex gap-1 py-2">
+      {sections.map((s) => (
+        <button
+          type="button"
+          data-section={s.id}
+          class:list={[
+            'admin-tab px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+            s.active
+              ? 'bg-primary text-white'
+              : 'text-text-light hover:bg-cream'
+          ]}
+        >
+          <span>{s.labelAr}</span>
+          <span class="text-xs opacity-75 mr-1">({s.labelEn})</span>
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <section class="py-8 bg-cream min-h-screen">
+    <div class="container max-w-3xl">
+
+      <!-- Login Form -->
+      <div id="login-section" class="card p-8 text-center">
+        <div class="w-16 h-16 rounded-full bg-primary/10 mx-auto mb-4 flex items-center justify-center">
+          <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+        <h2 class="text-xl font-bold text-text-dark mb-6 font-amiri">تسجيل الدخول</h2>
+        <form id="login-form" class="max-w-sm mx-auto">
+          <input
+            type="password"
+            id="password-input"
+            placeholder="كلمة المرور"
+            class="w-full px-4 py-3 border border-cream-dark rounded-lg bg-white text-text-dark text-center focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 mb-4"
+            required
+          />
+          <p id="login-error" class="text-sm text-red-500 mb-4 hidden"></p>
+          <button type="submit" class="btn btn-primary w-full">دخول</button>
+        </form>
+      </div>
+
+      <!-- Admin Panel (hidden until login) -->
+      <div id="admin-section" class="hidden">
+        <!-- Top bar: Status tabs + Sort + Logout -->
+        <div class="flex flex-wrap justify-between items-center gap-3 mb-6">
+          <div class="flex gap-2">
+            <button type="button" data-status="open" class="status-tab px-4 py-2 rounded-lg text-sm font-medium bg-primary text-white transition-colors">
+              مفتوحة
+            </button>
+            <button type="button" data-status="answered" class="status-tab px-4 py-2 rounded-lg text-sm font-medium text-text-light hover:bg-white transition-colors">
+              تمت الإجابة
+            </button>
+            <button type="button" data-status="hidden" class="status-tab px-4 py-2 rounded-lg text-sm font-medium text-text-light hover:bg-white transition-colors">
+              مخفية
+            </button>
+          </div>
+          <div class="flex items-center gap-3">
+            <select id="sort-select" class="px-3 py-1.5 text-sm border border-cream-dark rounded-lg bg-white text-text-dark focus:outline-none focus:border-primary">
+              <option value="date_asc">الأقدم أولاً</option>
+              <option value="date_desc">الأحدث أولاً</option>
+            </select>
+            <button id="logout-btn" class="text-sm text-red-500 hover:text-red-700 transition-colors">
+              تسجيل الخروج
+            </button>
+          </div>
+        </div>
+
+        <div id="questions-loading" class="text-center py-8">
+          <p class="text-text-light animate-pulse">جاري التحميل...</p>
+        </div>
+
+        <div id="questions-list" class="space-y-4 hidden"></div>
+
+        <div id="questions-empty" class="text-center py-12 hidden">
+          <div class="w-16 h-16 rounded-full bg-cream mx-auto mb-4 flex items-center justify-center">
+            <svg class="w-8 h-8 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+          </div>
+          <p id="empty-text" class="text-text-light text-lg">لا توجد أسئلة</p>
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="hidden justify-center items-center gap-4 mt-6">
+          <button id="prev-page" type="button" class="px-4 py-2 text-sm rounded-lg border border-cream-dark hover:bg-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+            السابق
+          </button>
+          <span id="page-info" class="text-sm text-text-light"></span>
+          <button id="next-page" type="button" class="px-4 py-2 text-sm rounded-lg border border-cream-dark hover:bg-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+            التالي
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  const loginSection = document.getElementById('login-section');
+  const adminSection = document.getElementById('admin-section');
+  const loginForm = document.getElementById('login-form');
+  const passwordInput = document.getElementById('password-input');
+  const loginError = document.getElementById('login-error');
+  const questionsLoading = document.getElementById('questions-loading');
+  const questionsList = document.getElementById('questions-list');
+  const questionsEmpty = document.getElementById('questions-empty');
+  const emptyText = document.getElementById('empty-text');
+  const logoutBtn = document.getElementById('logout-btn');
+  const sortSelect = document.getElementById('sort-select');
+  const pagination = document.getElementById('pagination');
+  const prevPageBtn = document.getElementById('prev-page');
+  const nextPageBtn = document.getElementById('next-page');
+  const pageInfo = document.getElementById('page-info');
+  const statusTabs = document.querySelectorAll('.status-tab');
+
+  let authToken = sessionStorage.getItem('admin_token');
+  let currentStatus = 'open';
+  let currentPage = 1;
+  let currentSort = 'date_asc';
+  let totalPages = 1;
+
+  // Check existing token
+  if (authToken) {
+    showAdmin();
+  }
+
+  // Status tab switching
+  statusTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      currentStatus = tab.dataset.status;
+      currentPage = 1;
+      currentSort = currentStatus === 'open' ? 'date_asc' : 'date_desc';
+      sortSelect.value = currentSort;
+      statusTabs.forEach(t => {
+        t.className = 'status-tab px-4 py-2 rounded-lg text-sm font-medium transition-colors ' +
+          (t.dataset.status === currentStatus ? 'bg-primary text-white' : 'text-text-light hover:bg-white');
+      });
+      loadQuestions(currentStatus);
+    });
+  });
+
+  // Sort change
+  sortSelect.addEventListener('change', () => {
+    currentSort = sortSelect.value;
+    currentPage = 1;
+    loadQuestions(currentStatus);
+  });
+
+  // Pagination
+  prevPageBtn.addEventListener('click', () => {
+    if (currentPage > 1) { currentPage--; loadQuestions(currentStatus); }
+  });
+  nextPageBtn.addEventListener('click', () => {
+    if (currentPage < totalPages) { currentPage++; loadQuestions(currentStatus); }
+  });
+
+  // Login
+  loginForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginError.classList.add('hidden');
+
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: passwordInput.value }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        authToken = data.token;
+        sessionStorage.setItem('admin_token', data.token);
+        showAdmin();
+      } else {
+        loginError.textContent = data.error || 'خطأ في تسجيل الدخول';
+        loginError.classList.remove('hidden');
+      }
+    } catch {
+      loginError.textContent = 'خطأ في الاتصال';
+      loginError.classList.remove('hidden');
+    }
+  });
+
+  // Logout
+  logoutBtn?.addEventListener('click', () => {
+    sessionStorage.removeItem('admin_token');
+    authToken = null;
+    adminSection.classList.add('hidden');
+    loginSection.classList.remove('hidden');
+    passwordInput.value = '';
+  });
+
+  async function showAdmin() {
+    loginSection.classList.add('hidden');
+    adminSection.classList.remove('hidden');
+    await loadQuestions('open');
+  }
+
+  function handleAuthError() {
+    sessionStorage.removeItem('admin_token');
+    authToken = null;
+    adminSection.classList.add('hidden');
+    loginSection.classList.remove('hidden');
+    loginError.textContent = 'انتهت صلاحية الجلسة. سجل الدخول مرة أخرى.';
+    loginError.classList.remove('hidden');
+  }
+
+  async function loadQuestions(status) {
+    questionsLoading.classList.remove('hidden');
+    questionsList.classList.add('hidden');
+    questionsEmpty.classList.add('hidden');
+    pagination.style.display = 'none';
+
+    const params = new URLSearchParams({ status, sort: currentSort, page: currentPage, limit: 20 });
+
+    try {
+      const res = await fetch('/api/admin/questions?' + params, {
+        headers: { 'Authorization': 'Bearer ' + authToken },
+      });
+
+      if (res.status === 401) { handleAuthError(); return; }
+
+      const data = await res.json();
+      questionsLoading.classList.add('hidden');
+      totalPages = data.pages || 1;
+
+      if (!data.questions || data.questions.length === 0) {
+        const labels = { open: 'لا توجد أسئلة مفتوحة', answered: 'لا توجد أسئلة مجاب عنها', hidden: 'لا توجد أسئلة مخفية' };
+        emptyText.textContent = labels[status] || 'لا توجد أسئلة';
+        questionsEmpty.classList.remove('hidden');
+        return;
+      }
+
+      questionsList.innerHTML = '';
+      data.questions.forEach(q => {
+        if (status === 'open') renderOpenQuestion(q);
+        else renderManagedQuestion(q, status);
+      });
+      questionsList.classList.remove('hidden');
+
+      if (totalPages > 1) {
+        pageInfo.textContent = `صفحة ${currentPage} من ${totalPages}`;
+        prevPageBtn.disabled = currentPage <= 1;
+        nextPageBtn.disabled = currentPage >= totalPages;
+        pagination.style.display = 'flex';
+      }
+    } catch {
+      questionsLoading.innerHTML = '<p class="text-red-500">خطأ في تحميل الأسئلة</p>';
+    }
+  }
+
+  // ── Render: Open questions (with answer form) ──
+
+  function renderOpenQuestion(q) {
+    const date = new Date(q.created_at).toLocaleDateString('ar-SA', {
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    });
+
+    const card = document.createElement('div');
+    card.className = 'card p-6';
+    card.id = 'question-' + q.id;
+    card.innerHTML = `
+      <div class="flex gap-3 mb-4">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="flex-1">
+          <textarea
+            id="question-text-${q.id}"
+            rows="2"
+            maxlength="1000"
+            class="w-full px-3 py-2 border border-cream-dark rounded-lg bg-white text-text-dark text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
+          >${escapeHtml(q.question_text)}</textarea>
+          <p class="text-xs text-text-light mt-1">${date}</p>
+        </div>
+      </div>
+
+      <div class="border-t border-cream-dark pt-4">
+        <input
+          type="text"
+          id="answer-title-${q.id}"
+          maxlength="200"
+          placeholder="عنوان الإجابة (يظهر في القائمة)"
+          class="w-full px-4 py-3 border border-cream-dark rounded-lg bg-white text-text-dark placeholder:text-text-light/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 mb-3"
+        />
+        <textarea
+          id="answer-text-${q.id}"
+          rows="3"
+          maxlength="5000"
+          placeholder="اكتب الإجابة هنا..."
+          class="w-full px-4 py-3 border border-cream-dark rounded-lg bg-white text-text-dark placeholder:text-text-light/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none mb-3"
+        ></textarea>
+
+        <div class="flex flex-wrap gap-2 mb-3">
+          <button type="button" class="record-btn flex items-center gap-2 px-4 py-2 rounded-lg border border-cream-dark hover:border-primary hover:bg-primary/5 transition-colors text-sm" data-question-id="${q.id}">
+            <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" /></svg>
+            <span>تسجيل صوتي</span>
+          </button>
+          <div id="recording-ui-${q.id}" class="hidden flex items-center gap-2">
+            <span class="flex items-center gap-1 text-red-500 text-sm">
+              <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+              <span id="recording-timer-${q.id}">0:00</span>
+            </span>
+            <button type="button" class="stop-btn px-3 py-1 bg-red-500 text-white rounded text-sm" data-question-id="${q.id}">إيقاف</button>
+          </div>
+          <div id="audio-preview-${q.id}" class="hidden w-full mt-2">
+            <div class="flex items-center gap-2">
+              <audio id="audio-player-${q.id}" controls class="flex-1"></audio>
+              <button type="button" class="delete-audio-btn text-red-500 hover:text-red-700 text-sm" data-question-id="${q.id}">حذف</button>
+            </div>
+          </div>
+        </div>
+
+        <p id="answer-message-${q.id}" class="text-sm hidden mb-2"></p>
+
+        <button type="button" class="submit-answer-btn btn btn-primary w-full flex items-center justify-center gap-2" data-question-id="${q.id}">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <span>إرسال الإجابة</span>
+        </button>
+      </div>
+    `;
+
+    questionsList.appendChild(card);
+
+    card.querySelector('.record-btn').addEventListener('click', () => startRecording(q.id));
+    card.querySelector('.stop-btn').addEventListener('click', () => stopRecording(q.id));
+    card.querySelector('.delete-audio-btn').addEventListener('click', () => deleteAudio(q.id));
+    card.querySelector('.submit-answer-btn').addEventListener('click', () => submitAnswer(q.id));
+  }
+
+  // ── Render: Answered/Hidden questions (with manage buttons) ──
+
+  function renderManagedQuestion(q, status) {
+    const date = new Date(q.answered_at).toLocaleDateString('ar-SA', {
+      year: 'numeric', month: 'short', day: 'numeric',
+    });
+
+    const answerPreview = q.answer_text
+      ? escapeHtml(q.answer_text.length > 100 ? q.answer_text.slice(0, 100) + '...' : q.answer_text)
+      : '';
+
+    const hasAudio = !!q.answer_audio_key;
+
+    const card = document.createElement('div');
+    card.className = 'card p-5';
+    card.id = 'question-' + q.id;
+
+    const statusBtns = status === 'answered'
+      ? `<button type="button" class="hide-btn px-3 py-1.5 text-sm rounded-lg border border-cream-dark hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700 transition-colors" data-id="${q.id}">إخفاء</button>`
+      : `<button type="button" class="restore-btn px-3 py-1.5 text-sm rounded-lg border border-cream-dark hover:bg-green-50 hover:border-green-300 hover:text-green-700 transition-colors" data-id="${q.id}">استعادة</button>`;
+
+    card.innerHTML = `
+      <div class="mb-3">
+        ${q.title ? `<p class="text-primary font-bold text-sm mb-1">${escapeHtml(q.title)}</p>` : ''}
+        <p class="text-text-dark font-semibold leading-relaxed text-sm">${escapeHtml(q.question_text)}</p>
+      </div>
+      ${answerPreview ? `<p class="text-text-light text-sm mb-2 whitespace-pre-wrap">${answerPreview}</p>` : ''}
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2 text-xs text-text-light">
+          <span>${date}</span>
+          ${hasAudio ? `<span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>صوتي</span>` : ''}
+        </div>
+        <div class="flex gap-2">
+          <button type="button" class="edit-btn px-3 py-1.5 text-sm rounded-lg border border-cream-dark hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 transition-colors" data-id="${q.id}">تعديل</button>
+          ${statusBtns}
+          <button type="button" class="delete-btn px-3 py-1.5 text-sm rounded-lg border border-cream-dark hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-colors" data-id="${q.id}">حذف</button>
+        </div>
+      </div>
+
+      <!-- Edit form (hidden) -->
+      <div id="edit-form-${q.id}" class="hidden border-t border-cream-dark mt-4 pt-4">
+        <label class="text-xs text-text-light mb-1 block">السؤال</label>
+        <textarea
+          id="edit-question-${q.id}"
+          rows="2"
+          maxlength="1000"
+          class="w-full px-3 py-2 border border-cream-dark rounded-lg bg-white text-text-dark text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none mb-3"
+        >${escapeHtml(q.question_text)}</textarea>
+        <label class="text-xs text-text-light mb-1 block">العنوان</label>
+        <input
+          type="text"
+          id="edit-title-${q.id}"
+          maxlength="200"
+          placeholder="عنوان الإجابة (يظهر في القائمة)"
+          value="${q.title ? escapeHtml(q.title) : ''}"
+          class="w-full px-4 py-3 border border-cream-dark rounded-lg bg-white text-text-dark placeholder:text-text-light/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 mb-3"
+        />
+        <label class="text-xs text-text-light mb-1 block">الإجابة</label>
+        <textarea
+          id="edit-text-${q.id}"
+          rows="4"
+          maxlength="5000"
+          class="w-full px-4 py-3 border border-cream-dark rounded-lg bg-white text-text-dark placeholder:text-text-light/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none mb-3"
+        >${q.answer_text ? escapeHtml(q.answer_text) : ''}</textarea>
+
+        <!-- Existing audio -->
+        ${hasAudio ? `
+        <div id="existing-audio-${q.id}" class="bg-cream rounded-lg p-3 mb-3">
+          <div class="flex items-center gap-2">
+            <audio controls class="flex-1" preload="none">
+              <source src="/api/audio/${q.answer_audio_key}" />
+            </audio>
+            <button type="button" class="remove-existing-audio-btn text-red-500 hover:text-red-700 text-sm" data-id="${q.id}">حذف الصوت</button>
+          </div>
+        </div>
+        ` : ''}
+
+        <!-- Record new audio -->
+        <div class="flex flex-wrap gap-2 mb-3">
+          <button type="button" class="record-btn flex items-center gap-2 px-4 py-2 rounded-lg border border-cream-dark hover:border-primary hover:bg-primary/5 transition-colors text-sm" data-question-id="${q.id}">
+            <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" /></svg>
+            <span>تسجيل جديد</span>
+          </button>
+          <div id="recording-ui-${q.id}" class="hidden flex items-center gap-2">
+            <span class="flex items-center gap-1 text-red-500 text-sm">
+              <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+              <span id="recording-timer-${q.id}">0:00</span>
+            </span>
+            <button type="button" class="stop-btn px-3 py-1 bg-red-500 text-white rounded text-sm" data-question-id="${q.id}">إيقاف</button>
+          </div>
+          <div id="audio-preview-${q.id}" class="hidden w-full mt-2">
+            <div class="flex items-center gap-2">
+              <audio id="audio-player-${q.id}" controls class="flex-1"></audio>
+              <button type="button" class="delete-audio-btn text-red-500 hover:text-red-700 text-sm" data-question-id="${q.id}">حذف</button>
+            </div>
+          </div>
+        </div>
+
+        <p id="answer-message-${q.id}" class="text-sm hidden mb-2"></p>
+
+        <div class="flex gap-2">
+          <button type="button" class="save-edit-btn btn btn-primary flex-1 flex items-center justify-center gap-2" data-id="${q.id}">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>حفظ التعديل</span>
+          </button>
+          <button type="button" class="cancel-edit-btn px-4 py-2 rounded-lg border border-cream-dark hover:bg-cream text-sm transition-colors" data-id="${q.id}">إلغاء</button>
+        </div>
+      </div>
+    `;
+
+    questionsList.appendChild(card);
+
+    // Event listeners
+    const hideBtn = card.querySelector('.hide-btn');
+    const restoreBtn = card.querySelector('.restore-btn');
+    const deleteBtn = card.querySelector('.delete-btn');
+    const editBtn = card.querySelector('.edit-btn');
+    const cancelEditBtn = card.querySelector('.cancel-edit-btn');
+    const saveEditBtn = card.querySelector('.save-edit-btn');
+    const removeExistingAudioBtn = card.querySelector('.remove-existing-audio-btn');
+
+    if (hideBtn) hideBtn.addEventListener('click', () => changeStatus(q.id, 'hidden'));
+    if (restoreBtn) restoreBtn.addEventListener('click', () => changeStatus(q.id, 'answered'));
+    if (deleteBtn) deleteBtn.addEventListener('click', () => deleteQuestion(q.id));
+
+    editBtn.addEventListener('click', () => {
+      document.getElementById('edit-form-' + q.id).classList.remove('hidden');
+      editBtn.classList.add('hidden');
+    });
+
+    cancelEditBtn.addEventListener('click', () => {
+      document.getElementById('edit-form-' + q.id).classList.add('hidden');
+      editBtn.classList.remove('hidden');
+      // Reset new recording if any
+      deleteAudio(q.id);
+    });
+
+    if (removeExistingAudioBtn) {
+      removeExistingAudioBtn.addEventListener('click', () => {
+        document.getElementById('existing-audio-' + q.id).remove();
+        recordings[q.id + '_removeExisting'] = true;
+      });
+    }
+
+    // Recording listeners for edit form
+    const recordBtn = card.querySelector('.record-btn');
+    const stopBtn = card.querySelector('.stop-btn');
+    const deleteAudioBtn = card.querySelector('.delete-audio-btn');
+
+    if (recordBtn) recordBtn.addEventListener('click', () => startRecording(q.id));
+    if (stopBtn) stopBtn.addEventListener('click', () => stopRecording(q.id));
+    if (deleteAudioBtn) deleteAudioBtn.addEventListener('click', () => deleteAudio(q.id));
+
+    saveEditBtn.addEventListener('click', () => saveEdit(q.id));
+  }
+
+  // ── Save edit ──
+
+  async function saveEdit(questionId) {
+    const questionText = document.getElementById('edit-question-' + questionId)?.value?.trim();
+    const titleText = document.getElementById('edit-title-' + questionId)?.value?.trim();
+    const answerText = document.getElementById('edit-text-' + questionId)?.value?.trim();
+    const audioBlob = recordings[questionId];
+    const removeExisting = recordings[questionId + '_removeExisting'];
+    const msg = document.getElementById('answer-message-' + questionId);
+    const btn = document.querySelector(`.save-edit-btn[data-id="${questionId}"]`);
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="animate-pulse">جاري الحفظ...</span>';
+
+    const formData = new FormData();
+    formData.append('question_id', String(questionId));
+    if (questionText) formData.append('question_text', questionText);
+    if (titleText) formData.append('title', titleText);
+    if (answerText) formData.append('answer_text', answerText);
+    if (audioBlob) formData.append('audio', audioBlob, 'answer.webm');
+    if (removeExisting && !audioBlob) formData.append('remove_audio', 'true');
+
+    try {
+      const res = await fetch('/api/admin/answer', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + authToken },
+        body: formData,
+      });
+
+      if (res.status === 401) { handleAuthError(); return; }
+
+      const data = await res.json();
+
+      if (res.ok) {
+        const card = document.getElementById('question-' + questionId);
+        card.innerHTML = `<p class="text-center text-sm text-green-600 py-3">تم حفظ التعديل بنجاح</p>`;
+        setTimeout(() => loadQuestions(currentStatus), 1500);
+      } else {
+        msg.textContent = data.error || 'حدث خطأ';
+        msg.className = 'text-sm text-red-500 mb-2';
+        msg.classList.remove('hidden');
+        btn.disabled = false;
+        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span>حفظ التعديل</span>';
+      }
+    } catch {
+      msg.textContent = 'خطأ في الاتصال';
+      msg.className = 'text-sm text-red-500 mb-2';
+      msg.classList.remove('hidden');
+      btn.disabled = false;
+      btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span>حفظ التعديل</span>';
+    }
+  }
+
+  // ── Status change (hide/restore) ──
+
+  async function changeStatus(id, newStatus) {
+    try {
+      const res = await fetch('/api/admin/questions', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + authToken,
+        },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+
+      if (res.status === 401) { handleAuthError(); return; }
+
+      if (res.ok) {
+        const card = document.getElementById('question-' + id);
+        const label = newStatus === 'hidden' ? 'تم الإخفاء' : 'تمت الاستعادة';
+        card.innerHTML = `<p class="text-center text-sm text-green-600 py-2">${label}</p>`;
+        setTimeout(() => {
+          card.remove();
+          if (questionsList.children.length === 0) {
+            questionsList.classList.add('hidden');
+            questionsEmpty.classList.remove('hidden');
+          }
+        }, 1000);
+      }
+    } catch {
+      alert('خطأ في الاتصال');
+    }
+  }
+
+  // ── Delete (permanent) ──
+
+  async function deleteQuestion(id) {
+    if (!confirm('هل أنت متأكد من حذف هذا السؤال نهائياً؟ لا يمكن التراجع.')) return;
+
+    try {
+      const res = await fetch('/api/admin/questions', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + authToken,
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      if (res.status === 401) { handleAuthError(); return; }
+
+      if (res.ok) {
+        const card = document.getElementById('question-' + id);
+        card.innerHTML = `<p class="text-center text-sm text-red-500 py-2">تم الحذف</p>`;
+        setTimeout(() => {
+          card.remove();
+          if (questionsList.children.length === 0) {
+            questionsList.classList.add('hidden');
+            questionsEmpty.classList.remove('hidden');
+          }
+        }, 1000);
+      }
+    } catch {
+      alert('خطأ في الاتصال');
+    }
+  }
+
+  // ── Audio recording ──
+
+  const recordings = {};
+
+  async function startRecording(questionId) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      const chunks = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+
+        if (blob.size > 10 * 1024 * 1024) {
+          const msg = document.getElementById('answer-message-' + questionId);
+          msg.textContent = 'التسجيل طويل جداً (الحد الأقصى 10 ميجابايت). حاول تسجيل أقصر.';
+          msg.className = 'text-sm text-red-500 mb-2';
+          msg.classList.remove('hidden');
+          return;
+        }
+
+        recordings[questionId] = blob;
+        const url = URL.createObjectURL(blob);
+        document.getElementById('audio-player-' + questionId).src = url;
+        document.getElementById('audio-preview-' + questionId).classList.remove('hidden');
+      };
+
+      recordings[questionId + '_recorder'] = mediaRecorder;
+      recordings[questionId + '_startTime'] = Date.now();
+      mediaRecorder.start();
+
+      document.querySelector(`.record-btn[data-question-id="${questionId}"]`).classList.add('hidden');
+      document.getElementById('recording-ui-' + questionId).classList.remove('hidden');
+
+      const timerEl = document.getElementById('recording-timer-' + questionId);
+      recordings[questionId + '_timer'] = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - recordings[questionId + '_startTime']) / 1000);
+        timerEl.textContent = Math.floor(elapsed / 60) + ':' + String(elapsed % 60).padStart(2, '0');
+      }, 1000);
+    } catch {
+      const msg = document.getElementById('answer-message-' + questionId);
+      msg.textContent = 'لا يمكن الوصول إلى الميكروفون. تأكد من إعطاء الإذن.';
+      msg.className = 'text-sm text-red-500 mb-2';
+      msg.classList.remove('hidden');
+    }
+  }
+
+  function stopRecording(questionId) {
+    const recorder = recordings[questionId + '_recorder'];
+    if (recorder && recorder.state === 'recording') recorder.stop();
+    clearInterval(recordings[questionId + '_timer']);
+    document.getElementById('recording-ui-' + questionId).classList.add('hidden');
+    document.querySelector(`.record-btn[data-question-id="${questionId}"]`).classList.remove('hidden');
+  }
+
+  function deleteAudio(questionId) {
+    delete recordings[questionId];
+    document.getElementById('audio-preview-' + questionId).classList.add('hidden');
+    const player = document.getElementById('audio-player-' + questionId);
+    if (player.src) URL.revokeObjectURL(player.src);
+    player.src = '';
+  }
+
+  async function submitAnswer(questionId) {
+    const questionText = document.getElementById('question-text-' + questionId)?.value?.trim();
+    const titleText = document.getElementById('answer-title-' + questionId)?.value?.trim();
+    const answerText = document.getElementById('answer-text-' + questionId)?.value?.trim();
+    const audioBlob = recordings[questionId];
+    const msg = document.getElementById('answer-message-' + questionId);
+    const btn = document.querySelector(`.submit-answer-btn[data-question-id="${questionId}"]`);
+
+    if (!answerText && !audioBlob) {
+      msg.textContent = 'يرجى كتابة إجابة أو تسجيل إجابة صوتية';
+      msg.className = 'text-sm text-red-500 mb-2';
+      msg.classList.remove('hidden');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="animate-pulse">جاري الإرسال...</span>';
+
+    const formData = new FormData();
+    formData.append('question_id', String(questionId));
+    if (questionText) formData.append('question_text', questionText);
+    if (titleText) formData.append('title', titleText);
+    if (answerText) formData.append('answer_text', answerText);
+    if (audioBlob) formData.append('audio', audioBlob, 'answer.webm');
+
+    try {
+      const res = await fetch('/api/admin/answer', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + authToken },
+        body: formData,
+      });
+
+      if (res.status === 401) { handleAuthError(); return; }
+
+      const data = await res.json();
+
+      if (res.ok) {
+        const card = document.getElementById('question-' + questionId);
+        card.innerHTML = `
+          <div class="text-center py-4">
+            <svg class="w-8 h-8 text-green-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <p class="text-green-600 font-medium">تم إرسال الإجابة بنجاح</p>
+          </div>
+        `;
+        setTimeout(() => {
+          card.remove();
+          if (questionsList.children.length === 0) {
+            questionsList.classList.add('hidden');
+            questionsEmpty.classList.remove('hidden');
+          }
+        }, 2000);
+      } else {
+        msg.textContent = data.error || 'حدث خطأ';
+        msg.className = 'text-sm text-red-500 mb-2';
+        msg.classList.remove('hidden');
+        resetSubmitBtn(btn);
+      }
+    } catch {
+      msg.textContent = 'خطأ في الاتصال';
+      msg.className = 'text-sm text-red-500 mb-2';
+      msg.classList.remove('hidden');
+      resetSubmitBtn(btn);
+    }
+  }
+
+  function resetSubmitBtn(btn) {
+    btn.disabled = false;
+    btn.innerHTML = `
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      <span>إرسال الإجابة</span>
+    `;
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+</script>
+
+<style>
+  .font-amiri {
+    font-family: var(--font-amiri);
+  }
+</style>

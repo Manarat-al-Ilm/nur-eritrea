@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import QACard from '../../components/QACard.astro';
+import { getAudioUrl, getDisplayTitle } from '../../lib/auth';
+
+export const prerender = false;
+
+const { id } = Astro.params;
+const numId = Number(id);
+
+if (Number.isNaN(numId)) {
+  return Astro.redirect('/404');
+}
+
+const db = Astro.locals.runtime.env.DB;
+
+const row = await db.prepare(
+  `SELECT id, question_text, title, answer_text, answer_audio_key, answered_at
+   FROM questions WHERE id = ? AND status = 'answered'`
+).bind(numId).first<{
+  id: number;
+  question_text: string;
+  title: string | null;
+  answer_text: string | null;
+  answer_audio_key: string | null;
+  answered_at: string;
+}>();
+
+if (!row) {
+  return Astro.redirect('/404');
+}
+
+// Cache individual Q&A page for 1 hour, serve stale up to 24h while revalidating
+Astro.response.headers.set('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
+
+const question = {
+  id: row.id,
+  title: row.title,
+  question_text: row.question_text,
+  answer_text: row.answer_text,
+  answer_audio_url: row.answer_audio_key ? getAudioUrl(row.answer_audio_key) : null,
+  answered_at: row.answered_at,
+};
+
+const displayTitle = getDisplayTitle(row.title, row.question_text);
+---
+
+<BaseLayout
+  title={displayTitle}
+  titleTi="ሕቶን መልስን"
+  description={row.question_text}
+>
+  <section class="py-8 bg-cream min-h-screen">
+    <div class="container max-w-3xl">
+      <a href="/qa" class="inline-flex items-center gap-2 text-primary hover:text-primary/80 text-sm mb-6 transition-colors">
+        <svg class="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        العودة إلى الأسئلة
+      </a>
+
+      <QACard {...question} />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .font-amiri {
+    font-family: var(--font-amiri);
+  }
+</style>

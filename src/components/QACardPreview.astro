@@ -1,0 +1,39 @@
+---
+import { getDisplayTitle } from '../lib/auth';
+
+interface Props {
+  id: number;
+  title: string | null;
+  question_text: string;
+  has_audio: boolean;
+  answered_at: string;
+}
+
+const { id, title, question_text, has_audio, answered_at } = Astro.props;
+
+const displayTitle = getDisplayTitle(title, question_text);
+const preview = question_text.length > 150 ? question_text.slice(0, 150) + '...' : question_text;
+const formattedDate = new Date(answered_at).toLocaleDateString('ar-SA', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<a href={`/qa/${id}`} class="card p-5 block hover:shadow-md transition-shadow group">
+  <h3 class="text-lg font-bold text-text-dark font-amiri mb-2 group-hover:text-primary transition-colors">
+    {displayTitle}
+  </h3>
+  <p class="text-text-light text-sm leading-relaxed mb-3">{preview}</p>
+  <div class="flex items-center gap-3 text-xs text-text-light">
+    <span>{formattedDate}</span>
+    {has_audio && (
+      <span class="flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+        </svg>
+        إجابة صوتية
+      </span>
+    )}
+  </div>
+</a>
