@@ -110,6 +110,12 @@ const COLLECTION = {
 // youtubeId -> { scholarId?, date?, titleAr? } for manual corrections.
 const OVERRIDES = {};
 
+// Speakers whose videos are not published on the site for now (community
+// decision pending). They must stay in SPEAKERS so their videos are still
+// recognized — removing them from the table would drop their videos into
+// the public "unassigned" collection instead of hiding them.
+const EXCLUDED_SPEAKERS = new Set(['ustadha-numa-abdurrahman', 'ustadha-asmahan-ali']);
+
 // --- Normalization ----------------------------------------------------------
 
 const ARABIC_DIGITS = /[٠-٩۰-۹]/g;
@@ -275,6 +281,7 @@ const rawIds = new Set(raw.map((r) => r.youtubeId));
 const problems = [];
 const dateDisagreements = [];
 const records = [];
+const excluded = [];
 
 for (const item of raw) {
   const override = OVERRIDES[item.youtubeId] || {};
@@ -291,6 +298,11 @@ for (const item of raw) {
     speaker = matchSpeaker(item.rawTitle);
   }
   const assigned = speaker || COLLECTION;
+
+  if (EXCLUDED_SPEAKERS.has(assigned.id)) {
+    excluded.push({ youtubeId: item.youtubeId, scholarId: assigned.id });
+    continue;
+  }
 
   // Date: only what the channel title proves.
   const { date: parsedDate, matched } = parseDate(item.rawTitle);
@@ -322,8 +334,13 @@ const videos = records.map(({ order, ...rest }) => rest);
 
 // --- Checks -----------------------------------------------------------------
 
-if (videos.length !== rawIds.size) {
-  problems.push(`${videos.length} Datensätze aus ${rawIds.size} Rohvideos — Verlust!`);
+if (videos.length + excluded.length !== rawIds.size) {
+  problems.push(
+    `${videos.length} Datensätze + ${excluded.length} ausgeschlossen ≠ ${rawIds.size} Rohvideos — Verlust!`
+  );
+}
+for (const id of EXCLUDED_SPEAKERS) {
+  if (!SPEAKERS.some((s) => s.id === id)) problems.push(`EXCLUDED_SPEAKERS: unbekannte id ${id}`);
 }
 const seenIds = new Set();
 const seenSlugs = new Set();
@@ -348,7 +365,7 @@ if (problems.length) {
 const countFor = (id) => videos.filter((v) => v.scholarId === id).length;
 
 const out = {
-  scholars: SPEAKERS.map((s) => ({
+  scholars: SPEAKERS.filter((s) => !EXCLUDED_SPEAKERS.has(s.id)).map((s) => ({
     id: s.id,
     nameAr: s.nameAr,
     nameTi: s.nameTi,
@@ -376,6 +393,11 @@ for (const s of out.scholars) console.log(`  ${String(s.videoCount).padStart(4)}
 console.log(`  ${String(out.collections[0].videoCount).padStart(4)}  ${COLLECTION.nameAr}`);
 
 const dated = videos.filter((v) => v.date).length;
+if (excluded.length) {
+  console.log(`\nBewusst nicht veröffentlicht (${excluded.length}, siehe EXCLUDED_SPEAKERS):`);
+  excluded.forEach((e) => console.log(`  ${e.youtubeId}  ${e.scholarId}`));
+}
+
 console.log(`\nMit Datum: ${dated} / ${videos.length} (ohne Beleg bleibt es leer)`);
 console.log(`Mit Laufzeit: ${videos.filter((v) => v.duration).length} / ${videos.length}`);
 

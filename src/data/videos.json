@@ -43,22 +43,8 @@
       "videoCount": 17
     },
     {
-      "id": "ustadha-numa-abdurrahman",
-      "nameAr": "الأستاذة نعمة عبد الرحمن",
-      "nameTi": "",
-      "specialty": "",
-      "videoCount": 2
-    },
-    {
       "id": "sheikh-muhammad-abdo",
       "nameAr": "الشيخ محمد عبده",
-      "nameTi": "",
-      "specialty": "",
-      "videoCount": 1
-    },
-    {
-      "id": "ustadha-asmahan-ali",
-      "nameAr": "الأستاذة أسمهان علي نعمان",
       "nameTi": "",
       "specialty": "",
       "videoCount": 1
@@ -149,17 +135,6 @@
       "seriesName": "",
       "date": "24-03-2021",
       "duration": "1:04:52"
-    },
-    {
-      "slug": "v-hsO6eZOjuAc",
-      "youtubeId": "hsO6eZOjuAc",
-      "titleAr": "درس ام رجاء . صحابيات حول رسول صل الله عليه وسلم",
-      "titleTi": "",
-      "scholarId": "ustadha-numa-abdurrahman",
-      "scholarName": "أ. نعمة عبد الرحمن",
-      "seriesName": "",
-      "date": "",
-      "duration": "31:31"
     },
     {
       "slug": "v-lkld7fmfhQA",
@@ -259,17 +234,6 @@
       "seriesName": "",
       "date": "",
       "duration": "1:49:11"
-    },
-    {
-      "slug": "v-Xu0SMF8G0UE",
-      "youtubeId": "Xu0SMF8G0UE",
-      "titleAr": "درس الاستاذة نعمة عبد الرحمن ام رجاء في سيرة الرسول صل الله عليه و سلم",
-      "titleTi": "",
-      "scholarId": "ustadha-numa-abdurrahman",
-      "scholarName": "أ. نعمة عبد الرحمن",
-      "seriesName": "",
-      "date": "",
-      "duration": "41:07"
     },
     {
       "slug": "v-EeZydczRZpM",
@@ -1623,17 +1587,6 @@
       "seriesName": "",
       "date": "11-01-2023",
       "duration": "26:13"
-    },
-    {
-      "slug": "v-3skclxuXdzE",
-      "youtubeId": "3skclxuXdzE",
-      "titleAr": "استاذة اسمهان علي نعمان محاضرة تربية الاولاد جمعية التضامن الاسلامي فرع فرانكفورت و ضواحيها",
-      "titleTi": "",
-      "scholarId": "ustadha-asmahan-ali",
-      "scholarName": "أ. أسمهان علي نعمان",
-      "seriesName": "",
-      "date": "",
-      "duration": "43:20"
     },
     {
       "slug": "v-QkdKbWhFZJY",
